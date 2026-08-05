@@ -1,0 +1,42 @@
+name: Bootstrap site direct
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rebuild archive from payload2
+        shell: bash
+        run: |
+          set -euxo pipefail
+          find .payload2 -maxdepth 1 -type f -name 'chunk-*' -print | sort
+          find .payload2 -maxdepth 1 -type f -name 'chunk-*' -print0 | sort -z | xargs -0 cat | tr -d '\r\n ' > /tmp/site.zip.b64
+          python - <<'PY'
+          import base64, pathlib
+          p = pathlib.Path('/tmp/site.zip.b64')
+          raw = p.read_text()
+          print('base64 chars:', len(raw))
+          data = base64.b64decode(raw, validate=True)
+          pathlib.Path('/tmp/site.zip').write_bytes(data)
+          print('zip bytes:', len(data))
+          PY
+          unzip -t /tmp/site.zip
+          mkdir -p /tmp/site
+          unzip -oq /tmp/site.zip -d /tmp/site
+          cp -a /tmp/site/. .
+          rm -rf .payload2 .bootstrap
+          rm -f .github/workflows/bootstrap-site.yml .github/workflows/bootstrap-site-fixed.yml .github/workflows/bootstrap-site-direct.yml
+      - name: Commit complete site
+        shell: bash
+        run: |
+          git config user.name 'kino-finance-bootstrap'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -A
+          git commit -m 'feat: publish cinema financing site'
+          git push
