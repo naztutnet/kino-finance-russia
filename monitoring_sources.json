@@ -1,0 +1,27 @@
+[
+  {
+    "id": "fond-kino",
+    "name": "Фонд кино",
+    "url": "https://fond-kino.ru/"
+  },
+  {
+    "id": "minculture-russia",
+    "name": "Министерство культуры Российской Федерации",
+    "url": "https://culture.gov.ru/"
+  },
+  {
+    "id": "iri",
+    "name": "Институт развития интернета",
+    "url": "https://xn--h1aax.xn--p1ai/"
+  },
+  {
+    "id": "pfci",
+    "name": "Президентский фонд культурных инициатив",
+    "url": "https://фондкультурныхинициатив.рф/"
+  },
+  {
+    "id": "kinoprime",
+    "name": "Кинопрайм",
+    "url": "https://kinoprime.ru/"
+  }
+]
