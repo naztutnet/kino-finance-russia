@@ -1,52 +1,56 @@
 (() => {
-  function disableButton(button) {
-    if (!button || button.dataset.pdfDisabledFinal === '1') return;
+  const CONTROLS = [
+    { selector: '[data-export-pdf]', label: 'Экспорт в PDF', key: 'pdf' },
+    { selector: '[data-export-csv]', label: 'Экспорт CSV', key: 'csv' },
+    { selector: '[data-copy-link]', label: 'Скопировать ссылку на подбор', key: 'link' }
+  ];
+
+  function disableButton(button, config) {
+    if (!button || button.dataset.disabledDevelopment === config.key) return;
 
     const replacement = button.cloneNode(true);
-    replacement.dataset.pdfDisabledFinal = '1';
-    replacement.textContent = 'Экспорт в PDF';
+    replacement.dataset.disabledDevelopment = config.key;
+    replacement.textContent = config.label;
     replacement.disabled = true;
     replacement.setAttribute('disabled', '');
     replacement.setAttribute('aria-disabled', 'true');
+    replacement.setAttribute('title', 'В разработке');
     replacement.tabIndex = -1;
     replacement.style.opacity = '0.45';
     replacement.style.cursor = 'not-allowed';
     replacement.style.pointerEvents = 'none';
 
     const wrapper = document.createElement('span');
-    wrapper.className = 'pdf-disabled-wrapper';
+    wrapper.className = `development-disabled-wrapper development-disabled-${config.key}`;
     wrapper.title = 'В разработке';
-    wrapper.setAttribute('aria-label', 'Экспорт в PDF — в разработке');
+    wrapper.setAttribute('aria-label', `${config.label} — в разработке`);
     wrapper.style.display = 'inline-flex';
     wrapper.style.cursor = 'not-allowed';
 
     button.replaceWith(wrapper);
     wrapper.appendChild(replacement);
-
-    const note = wrapper.closest('.mvp-exportbar')?.querySelector('.mvp-export-note');
-    if (note) note.textContent = 'В разработке';
   }
 
   function disableAll(root = document) {
-    root.querySelectorAll?.('[data-export-pdf]').forEach(disableButton);
+    CONTROLS.forEach(config => {
+      root.querySelectorAll?.(config.selector).forEach(button => disableButton(button, config));
+    });
+
+    document.querySelectorAll('.mvp-export-note').forEach(note => {
+      note.textContent = 'Экспорт и ссылка — в разработке';
+    });
+  }
+
+  function containsTarget(node) {
+    if (node.nodeType !== Node.ELEMENT_NODE) return false;
+    return CONTROLS.some(config => node.matches?.(config.selector) || node.querySelector?.(config.selector));
   }
 
   function install() {
     disableAll(document);
 
     const observer = new MutationObserver(records => {
-      let needsScan = false;
-      for (const record of records) {
-        for (const node of record.addedNodes) {
-          if (node.nodeType !== Node.ELEMENT_NODE) continue;
-          if (node.matches?.('[data-export-pdf]') || node.querySelector?.('[data-export-pdf]')) {
-            needsScan = true;
-            break;
-          }
-        }
-        if (needsScan) break;
-      }
-      if (needsScan) disableAll(document);
+      if (records.some(record => [...record.addedNodes].some(containsTarget))) disableAll(document);
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
