@@ -1,0 +1,54 @@
+name: Run intended redesign
+
+on:
+  push:
+    paths:
+      - '.github/workflows/run-redesign.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract and install intended site package
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64
+          import re
+          import zipfile
+
+          workflow = Path('.github/workflows/apply-redesign.yml')
+          text = workflow.read_text(encoding='utf-8')
+          match = re.search(r"cat > /tmp/site\.zip\.b64 <<'EOF'\n(.*?)\nEOF", text, re.S)
+          if not match:
+              raise SystemExit('Embedded site archive was not found')
+
+          archive = Path('/tmp/site.zip')
+          archive.write_bytes(base64.b64decode(match.group(1)))
+          with zipfile.ZipFile(archive) as package:
+              package.extractall('.')
+          PY
+
+          rm -f .github/workflows/apply-redesign.yml
+          rm -f .github/workflows/run-redesign.yml
+
+      - name: Commit restored website
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No changes to commit'
+            exit 0
+          fi
+          git commit -m 'fix: publish intended financing assistant website'
+          git push
