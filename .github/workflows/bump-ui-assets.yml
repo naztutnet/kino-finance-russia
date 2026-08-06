@@ -1,0 +1,33 @@
+name: Bump compact UI assets
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/bump-ui-assets.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update asset versions
+        shell: bash
+        run: |
+          sed -i 's/card-tools-fix.js?v=202608061225/card-tools-fix.js?v=202608061248/g' index.html istochniki.html calendar.html || true
+          sed -i 's/pdf-export.js?v=202608061239/pdf-export.js?v=202608061248/g' index.html istochniki.html calendar.html || true
+
+      - name: Commit changes
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html istochniki.html calendar.html
+          if ! git diff --cached --quiet; then
+            git commit -m 'chore: refresh compact card and PDF assets'
+            git push
+          fi
