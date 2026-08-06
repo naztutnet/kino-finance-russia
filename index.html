@@ -298,9 +298,13 @@ function resetFilters(){
 }
 
 async function boot(){
-  const res = await fetch('./data.json');
-  const data = await res.json();
-  ITEMS = data.items;
+  const files = Array.from({length: 9}, (_, i) => `./data-${String(i).padStart(2,'0')}.json`);
+  const parts = await Promise.all(files.map(async file => {
+    const res = await fetch(file, {cache:'no-store'});
+    if (!res.ok) throw new Error(`Не удалось загрузить ${file}`);
+    return res.json();
+  }));
+  ITEMS = parts.flatMap(part => part.items || []);
   initFilters();
   document.querySelectorAll('.field select, .field input, .cat-checks input').forEach(el=>{
     el.addEventListener('input', render);
