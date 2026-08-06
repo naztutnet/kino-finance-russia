@@ -1,5 +1,6 @@
 (() => {
   const STORAGE_KEY = 'kino-finance-mvp-v1';
+  let scheduled = false;
 
   function readFavoriteCount() {
     try {
@@ -13,8 +14,10 @@
   function syncFavoriteCount() {
     const count = readFavoriteCount();
     document.querySelectorAll('[data-favorites-count]').forEach(node => {
-      node.textContent = String(count);
-      node.hidden = count === 0;
+      const value = String(count);
+      if (node.textContent !== value) node.textContent = value;
+      const shouldHide = count === 0;
+      if (node.hidden !== shouldHide) node.hidden = shouldHide;
     });
   }
 
@@ -25,12 +28,13 @@
       nativeButton.click();
       return;
     }
-    const modal = document.getElementById('mvp-my-modal');
-    if (modal) modal.classList.add('open');
+    document.getElementById('mvp-my-modal')?.classList.add('open');
   }
 
   function setupNavigation() {
     document.querySelectorAll('header.site nav.tabs').forEach(nav => {
+      if (nav.dataset.mvpNavReady === '1') return;
+
       const links = [...nav.querySelectorAll('a')];
       const byFile = new Map();
       links.forEach(link => {
@@ -53,6 +57,8 @@
         favorites.addEventListener('click', openFavorites);
         nav.appendChild(favorites);
       }
+
+      nav.dataset.mvpNavReady = '1';
     });
 
     document.querySelectorAll('.mvp-header-tools [data-open-my]').forEach(button => {
@@ -74,7 +80,7 @@
 
     topGrid.classList.add('grid-filters-4');
     topGrid.appendChild(searchField);
-    if (oldGrid) oldGrid.classList.add('categories-only-grid');
+    oldGrid?.classList.add('categories-only-grid');
   }
 
   function reorderPrimaryActions() {
@@ -84,8 +90,12 @@
     const actions = go?.closest('.actions');
     if (!go || !open || !actions) return;
 
-    actions.insertBefore(open, go);
-    if (reset) actions.appendChild(reset);
+    if (open.parentElement !== actions || open.nextElementSibling !== go) {
+      actions.insertBefore(open, go);
+    }
+    if (reset && reset.parentElement === actions && actions.lastElementChild !== reset) {
+      actions.appendChild(reset);
+    }
   }
 
   function transformCard(card) {
@@ -98,6 +108,8 @@
     const verification = tools.querySelector('.mvp-verification');
     const actions = tools.querySelector('.mvp-card-actions');
     if (!verification || !actions) return;
+
+    card.dataset.mvpLayoutFixed = '1';
 
     const verificationRow = document.createElement('div');
     verificationRow.className = 'row mvp-meta-row';
@@ -112,33 +124,57 @@
     rows.appendChild(verificationRow);
     rows.appendChild(actionsRow);
     tools.remove();
-    card.dataset.mvpLayoutFixed = '1';
   }
 
-  function refresh(root = document) {
-    setupNavigation();
-    moveSearchToTop();
+  function applyDynamicLayout() {
+    scheduled = false;
     reorderPrimaryActions();
-    if (root.matches?.('.card')) transformCard(root);
-    root.querySelectorAll?.('.card').forEach(transformCard);
+    document.querySelectorAll('.card').forEach(transformCard);
+    document.querySelectorAll('.mvp-header-tools [data-open-my]').forEach(button => {
+      button.hidden = true;
+      button.setAttribute('aria-hidden', 'true');
+    });
+  }
+
+  function scheduleDynamicLayout() {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(applyDynamicLayout);
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    refresh(document);
+    setupNavigation();
+    moveSearchToTop();
+    applyDynamicLayout();
 
     const observer = new MutationObserver(records => {
+      let relevant = false;
       for (const record of records) {
         for (const node of record.addedNodes) {
-          if (node.nodeType === Node.ELEMENT_NODE) refresh(node);
+          if (node.nodeType !== Node.ELEMENT_NODE) continue;
+          if (
+            node.matches?.('.card,.mvp-card-tools,.mvp-open-filter,.mvp-header-tools') ||
+            node.querySelector?.('.card,.mvp-card-tools,.mvp-open-filter,.mvp-header-tools')
+          ) {
+            relevant = true;
+            break;
+          }
         }
+        if (relevant) break;
       }
-      refresh(document);
-      syncFavoriteCount();
+      if (relevant) scheduleDynamicLayout();
     });
 
-    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
-    document.addEventListener('click', () => setTimeout(syncFavoriteCount, 0));
-    document.addEventListener('change', () => setTimeout(syncFavoriteCount, 0));
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    document.addEventListener('click', event => {
+      if (event.target.closest('[data-mvp-favorite],[data-open-my],[data-favorites-nav]')) {
+        setTimeout(syncFavoriteCount, 0);
+      }
+    });
+    document.addEventListener('change', event => {
+      if (event.target.matches('[data-mvp-status]')) setTimeout(syncFavoriteCount, 0);
+    });
     window.addEventListener('storage', syncFavoriteCount);
   });
 })();
