@@ -6,7 +6,7 @@
 <title>Календарь дедлайнов — финансирование кино</title>
 <link rel="stylesheet" href="style.css">
 <style>
-.calendar-toolbar{display:grid;grid-template-columns:auto auto auto minmax(240px,1fr) auto;gap:9px;align-items:center;margin:26px 0 18px;padding:14px;background:#f1f1f1;border-radius:8px}.calendar-toolbar button,.calendar-toolbar input,.calendar-toolbar a{min-height:40px;border:1px solid #bbb;border-radius:5px;background:#fff;color:#111;padding:9px 12px;font:inherit;text-decoration:none}.calendar-toolbar button{cursor:pointer;font-weight:800}.calendar-toolbar button.active{background:#111;color:#fff;border-color:#111}.calendar-toolbar a{display:flex;align-items:center;justify-content:center;font-weight:800}.calendar-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.calendar-stat{padding:15px;background:#fff;border:1px dashed #1d1d1d;border-radius:7px}.calendar-stat strong{display:block;font-size:25px;line-height:1}.calendar-stat span{display:block;margin-top:5px;color:#666;font-size:11px;font-weight:700;text-transform:uppercase}.deadline-list{display:grid;gap:12px}.deadline-card{display:grid;grid-template-columns:150px minmax(210px,.85fr) minmax(280px,1.45fr);gap:16px;padding:16px;background:#fff;border:1px dashed #888;border-radius:8px}.date-box{padding:12px;background:#f1f1f1;border-radius:6px}.date-box strong{display:block;font-size:19px;line-height:1.15}.date-box span{display:block;margin-top:7px;color:#666;font-size:11px;font-weight:800}.deadline-card h3{margin:8px 0 4px;font-size:16px}.deadline-card p{margin:0;color:#333}.status{display:inline-flex;padding:5px 7px;border-radius:4px;background:#e7e7e7;font-size:10px;font-weight:900;text-transform:uppercase}.status.open{background:#dceedd}.status.closed{background:#ececec}.status.wait{background:#f4ecd2}.deadline-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}.deadline-actions a{padding:6px 8px;border:1px solid #bbb;border-radius:4px;font-size:11px;font-weight:800;text-decoration:none}.calendar-notice{margin:18px 0 36px;padding:15px;background:#fff;border:1px dashed #1d1d1d;border-radius:7px;color:#444}.calendar-empty{padding:35px;text-align:center;background:#f1f1f1;border-radius:8px;color:#555}@media(max-width:900px){.calendar-toolbar{grid-template-columns:repeat(3,auto);}.calendar-toolbar input{grid-column:1/-1}.calendar-toolbar a{grid-column:1/-1}.calendar-stats{grid-template-columns:repeat(2,1fr)}.deadline-card{grid-template-columns:1fr}}@media(max-width:520px){.calendar-stats{grid-template-columns:1fr}.calendar-toolbar{grid-template-columns:1fr}.calendar-toolbar input,.calendar-toolbar a{grid-column:auto}}
+.calendar-toolbar{display:grid;grid-template-columns:auto auto auto minmax(240px,1fr) auto;gap:9px;align-items:center;margin:26px 0 18px;padding:14px;background:#f1f1f1;border-radius:8px}.calendar-toolbar button,.calendar-toolbar input,.calendar-toolbar a{min-height:40px;border:1px solid #bbb;border-radius:5px;background:#fff;color:#111;padding:9px 12px;font:inherit;text-decoration:none}.calendar-toolbar button{cursor:pointer;font-weight:800}.calendar-toolbar button.active{background:#111;color:#fff;border-color:#111}.calendar-toolbar a{display:flex;align-items:center;justify-content:center;font-weight:800}.calendar-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.calendar-stat{padding:15px;background:#fff;border:1px dashed #1d1d1d;border-radius:7px}.calendar-stat strong{display:block;font-size:25px;line-height:1}.calendar-stat span{display:block;margin-top:5px;color:#666;font-size:11px;font-weight:700;text-transform:uppercase}.deadline-list{display:grid;gap:12px}.deadline-card{display:grid;grid-template-columns:150px minmax(210px,.85fr) minmax(280px,1.45fr);gap:16px;padding:16px;background:#fff;border:1px dashed #888;border-radius:8px}.date-box{padding:12px;background:#f1f1f1;border-radius:6px}.date-box strong{display:block;font-size:19px;line-height:1.15}.date-box span{display:block;margin-top:7px;color:#666;font-size:11px;font-weight:800}.deadline-card h3{margin:8px 0 4px;font-size:16px}.deadline-card p{margin:0;color:#333}.status{display:inline-flex;padding:5px 7px;border-radius:4px;background:#e7e7e7;font-size:10px;font-weight:900;text-transform:uppercase}.status.open,.status.published{background:#dceedd}.status.closed{background:#ececec}.status.wait{background:#f4ecd2}.deadline-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}.deadline-actions a{padding:6px 8px;border:1px solid #bbb;border-radius:4px;font-size:11px;font-weight:800;text-decoration:none}.calendar-notice{margin:18px 0 36px;padding:15px;background:#fff;border:1px dashed #1d1d1d;border-radius:7px;color:#444}.calendar-empty{padding:35px;text-align:center;background:#f1f1f1;border-radius:8px;color:#555}@media(max-width:900px){.calendar-toolbar{grid-template-columns:repeat(3,auto);}.calendar-toolbar input{grid-column:1/-1}.calendar-toolbar a{grid-column:1/-1}.calendar-stats{grid-template-columns:repeat(2,1fr)}.deadline-card{grid-template-columns:1fr}}@media(max-width:520px){.calendar-stats{grid-template-columns:1fr}.calendar-toolbar{grid-template-columns:1fr}.calendar-toolbar input,.calendar-toolbar a{grid-column:auto}}
 </style>
 </head>
 <body>
@@ -44,7 +44,7 @@
   </section>
 
   <section class="calendar-notice">
-    <strong>Принцип проверки:</strong> если организатор не назвал точный день, календарь показывает «Дата ожидается», а не вычисленную или предполагаемую дату. Кнопка «Подать заявку» показывается только для действующего приёма.
+    <strong>Принцип проверки:</strong> если организатор не назвал точный день, календарь показывает «Дата ожидается», а не вычисленную или предполагаемую дату. Кнопка «Результаты» выводится только для конкретного завершённого отбора и только после проверки прямой официальной ссылки.
   </section>
 </main>
 
@@ -54,8 +54,23 @@ let selectedYear='all';
 const list=document.getElementById('deadlineList');
 const search=document.getElementById('calendarSearch');
 function esc(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-function link(url,label){return url?`<a href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:'';}
+function link(url,label){return url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${label}</a>`:'';}
 function isSubmission(item){return String(item.kind||item.event_type||'').toLowerCase().includes('подач');}
+function isResultEvent(item){return String(item.kind||item.event_type||'').toLowerCase().includes('результ');}
+function normalizedUrl(value){
+  try{return new URL(String(value||''),location.href);}catch(e){return null;}
+}
+function verifiedResultUrl(item){
+  if(!isResultEvent(item)||item.results_verified!==true)return'';
+  const result=normalizedUrl(item.results||item.results_url);
+  if(!result||!/^https?:$/.test(result.protocol))return'';
+  if(!result.pathname||result.pathname==='/')return'';
+  const source=normalizedUrl(item.source||item.source_url);
+  const apply=normalizedUrl(item.apply||item.application_url);
+  if(source&&result.href===source.href)return'';
+  if(apply&&result.href===apply.href)return'';
+  return result.href;
+}
 function deadlineDate(item){
   const value=String(item.date_iso||item.sort||'');
   if(!/^\d{4}-\d{2}-\d{2}$/.test(value))return null;
@@ -70,6 +85,7 @@ function effectiveStatus(item){
 }
 function effectiveStatusText(item,status){
   if(status==='closed')return'Приём завершён';
+  if(status==='published')return item.statusText||item.status_text||'Результаты опубликованы';
   if(status==='open')return item.statusText||item.status_text||'Приём открыт';
   return item.statusText||item.status_text||'Дата ожидается';
 }
@@ -86,7 +102,7 @@ function render(){
   }).sort((a,b)=>String(a.sort||a.date_iso||'9999').localeCompare(String(b.sort||b.date_iso||'9999')));
   document.getElementById('allCount').textContent=items.length;
   document.getElementById('openCount').textContent=items.filter(i=>effectiveStatus(i)==='open').length;
-  document.getElementById('resultCount').textContent=items.filter(i=>(i.kind||i.event_type||'').toLowerCase().includes('результ')).length;
+  document.getElementById('resultCount').textContent=items.filter(isResultEvent).length;
   document.getElementById('waitCount').textContent=items.filter(i=>effectiveStatus(i)==='wait'||String(i.date||'').toLowerCase().includes('ожида')).length;
   if(!filtered.length){list.innerHTML='<div class="calendar-empty">По выбранным параметрам событий нет.</div>';return;}
   list.innerHTML=filtered.map(i=>{
@@ -97,7 +113,8 @@ function render(){
     const title=i.title||i.program||'';
     const note=i.note||i.description||'';
     const applyLink=canApply(i)?link(i.apply||i.application_url,'Подать заявку'):'';
-    return `<article class="deadline-card"><div class="date-box"><strong>${esc(date)}</strong><span>${esc(year)} · ${esc(i.kind||i.event_type||'Событие')}</span></div><div><span class="status ${esc(status)}">${esc(effectiveStatusText(i,status))}</span><h3>${esc(organizer)}</h3><p>${esc(title)}</p></div><div><p>${esc(note)}</p><div class="deadline-actions">${applyLink}${link(i.results||i.results_url,'Результаты')}${link(i.source||i.source_url,'Официальный источник')}</div></div></article>`;
+    const resultLink=link(verifiedResultUrl(i),'Результаты');
+    return `<article class="deadline-card"><div class="date-box"><strong>${esc(date)}</strong><span>${esc(year)} · ${esc(i.kind||i.event_type||'Событие')}</span></div><div><span class="status ${esc(status)}">${esc(effectiveStatusText(i,status))}</span><h3>${esc(organizer)}</h3><p>${esc(title)}</p></div><div><p>${esc(note)}</p><div class="deadline-actions">${applyLink}${resultLink}${link(i.source||i.source_url,'Официальный источник')}</div></div></article>`;
   }).join('');
 }
 async function load(){
