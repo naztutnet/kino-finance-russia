@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Календарь дедлайнов — финансирование кино</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">КИНО / ФИНАНСИРОВАНИЕ</a>
+    <nav aria-label="Основная навигация">
+      <a href="index.html">Главная</a>
+      <a href="istochniki.html">Источники</a>
+      <a class="active" href="calendar.html">Календарь</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-head">
+      <p class="eyebrow">СРОКИ ПОДАЧИ И РЕЗУЛЬТАТЫ</p>
+      <h1>Календарь<br>дедлайнов</h1>
+      <p>Отборы 2026 и 2027 годов. Дата считается подтверждённой только при наличии официального объявления или положения.</p>
+    </section>
+
+    <div class="toolbar" aria-label="Фильтры">
+      <button class="control filter-button active" data-year="all">Все</button>
+      <button class="control filter-button" data-year="2026">2026</button>
+      <button class="control filter-button" data-year="2027">2027</button>
+      <input id="calendarSearch" class="control" type="search" placeholder="Поиск по фонду или программе">
+      <a class="button" href="kino-finance-deadlines.ics">Подписаться на .ICS</a>
+    </div>
+
+    <section class="calendar-stats" aria-label="Статистика">
+      <div class="stat"><strong id="allCount">—</strong><span>всего событий</span></div>
+      <div class="stat"><strong id="openCount">—</strong><span>приём открыт</span></div>
+      <div class="stat"><strong id="resultCount">—</strong><span>результаты</span></div>
+      <div class="stat"><strong id="waitCount">—</strong><span>дата ожидается</span></div>
+    </section>
+
+    <section id="deadlineList" class="list" aria-live="polite">
+      <div class="empty">Загрузка календаря…</div>
+    </section>
+
+    <section class="notice">
+      <strong>Принцип проверки:</strong> если организатор не назвал точный день, в календаре указывается «дата ожидается», а не расчётная дата.
+    </section>
+  </main>
+
+  <footer>
+    <span>Календарь финансирования кино · 2026–2027</span>
+    <span id="updatedAt">Проверка данных: —</span>
+  </footer>
+
+<script>
+const fallback = [
+  {
+    year: 2027,
+    date: '30.06.2026',
+    sort: '2026-06-30',
+    kind: 'Подача',
+    status: 'closed',
+    statusText: 'Приём завершён',
+    organizer: 'Президентский фонд культурных инициатив',
+    title: 'Первый конкурс 2027 года',
+    note: 'Окончание подачи — 30 июня 2026 года, 23:30 по московскому времени.',
+    apply: 'https://фондкультурныхинициатив.рф/',
+    source: 'https://фондкультурныхинициатив.рф/',
+    results: ''
+  },
+  {
+    year: 2026,
+    date: 'Дата ожидается',
+    sort: '9999-12-31',
+    kind: 'Подача',
+    status: 'wait',
+    statusText: 'Дата ожидается',
+    organizer: 'Фонд кино',
+    title: 'Новые отборы и меры поддержки',
+    note: 'Точная дата добавляется после публикации официального объявления.',
+    apply: 'https://fond-kino.ru/',
+    source: 'https://fond-kino.ru/',
+    results: 'https://fond-kino.ru/'
+  },
+  {
+    year: 2026,
+    date: 'Дата ожидается',
+    sort: '9999-12-31',
+    kind: 'Подача',
+    status: 'wait',
+    statusText: 'Дата ожидается',
+    organizer: 'Министерство культуры РФ',
+    title: 'Государственная поддержка кинематографии',
+    note: 'Следите за приказами, объявлениями и конкурсной документацией.',
+    apply: 'https://culture.gov.ru/',
+    source: 'https://culture.gov.ru/',
+    results: 'https://culture.gov.ru/'
+  },
+  {
+    year: 2026,
+    date: 'Дата ожидается',
+    sort: '9999-12-31',
+    kind: 'Подача',
+    status: 'wait',
+    statusText: 'Дата ожидается',
+    organizer: 'Институт развития интернета',
+    title: 'Конкурсы аудиовизуального и национального контента',
+    note: 'Событие обновляется после публикации карточки соответствующего конкурса.',
+    apply: 'https://xn--h1aax.xn--p1ai/',
+    source: 'https://xn--h1aax.xn--p1ai/',
+    results: 'https://xn--h1aax.xn--p1ai/'
+  }
+];
+
+let items = [];
+let selectedYear = 'all';
+const list = document.getElementById('deadlineList');
+const search = document.getElementById('calendarSearch');
+
+function normalize(raw) {
+  if (Array.isArray(raw)) return raw;
+  if (raw && Array.isArray(raw.deadlines)) return raw.deadlines;
+  if (raw && Array.isArray(raw.events)) return raw.events;
+  return [];
+}
+function esc(value='') {
+  return String(value).replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+}
+function link(url, label, cls='small-link') {
+  return url ? `<a class="${cls}" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>` : '';
+}
+function render() {
+  const q = search.value.trim().toLowerCase();
+  const filtered = items.filter(item => {
+    const year = String(item.year || item.program_year || '');
+    const hay = `${item.organizer||''} ${item.title||item.program||''} ${item.note||''}`.toLowerCase();
+    return (selectedYear === 'all' || year === selectedYear) && (!q || hay.includes(q));
+  }).sort((a,b) => String(a.sort||a.date_iso||'9999').localeCompare(String(b.sort||b.date_iso||'9999')));
+
+  document.getElementById('allCount').textContent = items.length;
+  document.getElementById('openCount').textContent = items.filter(x => (x.status||'').toLowerCase() === 'open').length;
+  document.getElementById('resultCount').textContent = items.filter(x => (x.kind||x.event_type||'').toLowerCase().includes('результ')).length;
+  document.getElementById('waitCount').textContent = items.filter(x => (x.status||'').toLowerCase() === 'wait' || String(x.date||'').toLowerCase().includes('ожида')).length;
+
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty">По выбранным параметрам событий нет.</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(item => {
+    const status = (item.status || 'wait').toLowerCase();
+    const date = item.date || item.deadline || item.date_label || 'Дата ожидается';
+    const year = item.year || item.program_year || '';
+    const organizer = item.organizer || item.fund || '';
+    const title = item.title || item.program || '';
+    const note = item.note || item.description || '';
+    return `<article class="deadline-card" data-year="${esc(year)}">
+      <div class="date-box"><strong>${esc(date)}</strong><span>${esc(year)} · ${esc(item.kind || item.event_type || 'Событие')}</span></div>
+      <div><span class="status ${esc(status)}">${esc(item.statusText || item.status_text || 'Дата ожидается')}</span><h3>${esc(organizer)}</h3><p>${esc(title)}</p></div>
+      <div><p>${esc(note)}</p><div class="deadline-actions">${link(item.apply || item.application_url, 'Подать заявку')}${link(item.results || item.results_url, 'Результаты')}${link(item.source || item.source_url, 'Официальный источник')}</div></div>
+    </article>`;
+  }).join('');
+}
+
+async function load() {
+  for (const file of ['deadlines.json','data.json']) {
+    try {
+      const response = await fetch(file, {cache:'no-store'});
+      if (!response.ok) continue;
+      const data = normalize(await response.json());
+      if (data.length) { items = data; break; }
+    } catch (e) {}
+  }
+  if (!items.length) items = fallback;
+  render();
+  document.getElementById('updatedAt').textContent = `Проверка данных: ${new Date().toLocaleDateString('ru-RU')}`;
+}
+
+document.querySelectorAll('[data-year]').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('[data-year]').forEach(x => x.classList.remove('active'));
+  btn.classList.add('active');
+  selectedYear = btn.dataset.year;
+  render();
+}));
+search.addEventListener('input', render);
+load();
+</script>
+</body>
+</html>
