@@ -2,20 +2,19 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Все источники финансирования — Справочник продюсера</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <header class="site">
   <div class="wrap">
     <div class="eyebrow">Справочник продюсера · Россия · 2026</div>
     <h1>Все источники финансирования</h1>
-    <p class="sub">Полный каталог: государственные фонды, частные фонды, региональные рибейты, питчинги,
-    фестивали с призами, акселераторы и международные программы — всё в одном месте, без подбора под проект.</p>
+    <p class="sub">Государственные и частные фонды, региональные рибейты, питчинги, фестивали, лаборатории и международные программы.</p>
     <nav class="tabs">
       <a href="index.html">Помощник</a>
+      <a href="calendar.html">Календарь</a>
       <a href="istochniki.html" class="active">Все источники</a>
     </nav>
   </div>
@@ -23,17 +22,17 @@
 
 <div class="wrap">
   <div class="panel">
-    <h2>Поиск и фильтр по категориям</h2>
+    <h2>Поиск и фильтр</h2>
     <div class="grid-filters">
-      <div class="field" style="grid-column: span 3;">
+      <div class="field" style="grid-column:span 3;">
         <label>Категории источников</label>
         <div class="cat-checks">
-        <label><input type="checkbox" value="gov" checked> Государственный</label>
-        <label><input type="checkbox" value="priv" checked> Частный</label>
-        <label><input type="checkbox" value="reg" checked> Региональный</label>
-        <label><input type="checkbox" value="pitch" checked> Питчинг / фестиваль</label>
-        <label><input type="checkbox" value="grant" checked> Грант / лаборатория / акселератор</label>
-        <label><input type="checkbox" value="intl" checked> Международный</label>
+          <label><input type="checkbox" value="gov" checked> Государственный</label>
+          <label><input type="checkbox" value="priv" checked> Частный</label>
+          <label><input type="checkbox" value="reg" checked> Региональный</label>
+          <label><input type="checkbox" value="pitch" checked> Питчинг / фестиваль</label>
+          <label><input type="checkbox" value="grant" checked> Грант / лаборатория</label>
+          <label><input type="checkbox" value="intl" checked> Международный</label>
         </div>
       </div>
       <div class="field">
@@ -41,141 +40,46 @@
         <input type="text" id="f-query" placeholder="например, Фонд кино">
       </div>
     </div>
-    <div class="actions">
-      <button class="ghost" id="reset-btn">Сбросить фильтры</button>
-    </div>
+    <div class="actions"><button class="ghost" id="reset-btn">Сбросить фильтры</button></div>
   </div>
 
-  <div class="results-head">
-    <h2>Каталог</h2>
-    <div class="count" id="results-count">—</div>
-  </div>
-
+  <div class="results-head"><h2>Каталог</h2><div class="count" id="results-count">—</div></div>
   <div class="quicknav" id="quicknav"></div>
-
   <div id="catalog-root"></div>
 
-  <footer class="site">
-    <strong>Как искать проект под себя:</strong> для подбора источников именно под ваш проект (тип, стадия,
-    регион, бюджет, дебют) удобнее страница «Помощник» — здесь же полный список для свободного просмотра.<br><br>
-    Данные соответствуют версии рабочей базы 0.4 от 2026-08-05. Условия конкурсов меняются —
-    перед подачей заявки сверяйтесь с официальным источником по ссылке в карточке.
-  </footer>
+  <footer class="site">Для подбора источников под конкретный проект используйте «Помощник». Сроки подачи и результатов собраны в разделе «Календарь».</footer>
 </div>
 
 <script>
-let ITEMS = [];
-let BLOCKS = [];
-const CAT_SEAL = {gov:'ГОС', priv:'ЧАСТ', reg:'РЕГ', pitch:'ПИТЧ', grant:'ГРАНТ', intl:'МЕЖД'};
-const BASIS_LABELS = {
-  prize:'приз / премия конкурса', stipend:'личная стипендия автору', pool_total:'общий пул региона/года, не лимит на проект',
-  non_monetary:'нефинансовая поддержка', pathway:'даёт преимущество в другом конкурсе', fund_unknown:'лимит на проект не раскрыт',
-  unclear:'сумма не указана в источнике',
-};
-
-function fmt(v){ return (v===undefined || v===null || v==='') ? null : v; }
-function linkify(v){
-  if (!v) return null;
-  if (/^https?:\/\//i.test(v)) return `<a href="${v}" target="_blank" rel="noopener">${v}</a>`;
-  return v;
+let ITEMS=[],BLOCKS=[];
+const CAT_SEAL={gov:'ГОС',priv:'ЧАСТ',reg:'РЕГ',pitch:'ПИТЧ',grant:'ГРАНТ',intl:'МЕЖД'};
+const BASIS_LABELS={prize:'приз / премия конкурса',stipend:'личная стипендия автору',pool_total:'общий пул региона/года',non_monetary:'нефинансовая поддержка',pathway:'преимущество в другом конкурсе',fund_unknown:'лимит на проект не раскрыт',unclear:'сумма не указана'};
+function linkify(v){return v&&/^https?:\/\//i.test(v)?`<a href="${v}" target="_blank" rel="noopener">Официальный источник</a>`:v||'';}
+function card(i){
+  const rows=[];const add=(k,v)=>{if(v)rows.push(`<div class="row"><div class="k">${k}</div><div class="v">${v}</div></div>`);};
+  add('Для чего',i.what_for);add('Финансирование',[i.max_amount_text,i.coverage_pct,i.returnable].filter(Boolean).join(' · '));add('Регион',i.region);
+  add('Сроки',[i.deadline_text&&`приём: ${i.deadline_text}`,i.defense_date&&`защита: ${i.defense_date}`,i.results_date&&`результаты: ${i.results_date}`].filter(Boolean).join(' · '));
+  add('Статус',[i.results_summary,i.status].filter(Boolean).join(' · '));if(i.amount&&i.amount.note)add('Пояснение',i.amount.note);add('Контакты',i.contacts);add('Ссылка',linkify(i.link));add('Заметка',i.note);
+  const basis=i.amount&&BASIS_LABELS[i.amount.basis]?`<div class="reasons"><span class="chip chip-basis">${BASIS_LABELS[i.amount.basis]}</span></div>`:'';
+  const search=`${i.title} ${i.org} ${i.program} ${i.what_for}`.toLowerCase().replace(/"/g,'');
+  return `<article class="card" style="--accent:var(--${i.category})" data-cat="${i.category}" data-search="${search}"><div class="cat-bar"><div class="org">${i.org}</div>${i.program?`<div class="prog">${i.program}</div>`:''}<div class="seal">${CAT_SEAL[i.category]}</div></div>${basis}<div class="rows">${rows.join('')}</div></article>`;
 }
-
-function renderCard(item){
-  const color = `var(--${item.category})`;
-  const rows = [];
-  const push = (k,v) => { v = fmt(v); if (v) rows.push(`<div class="row"><div class="k">${k}</div><div class="v">${v}</div></div>`); };
-  push('Для чего', item.what_for);
-  const finParts = [item.max_amount_text, item.coverage_pct ? ('покрытие ' + item.coverage_pct) : '', item.returnable].filter(Boolean);
-  push('Финансирование', finParts.join(' · '));
-  if (item.region) push('Регион', item.region);
-  const sroki = [item.deadline_text ? ('приём: ' + item.deadline_text) : '', item.defense_date ? ('защита: ' + item.defense_date) : '', item.results_date ? ('результаты: ' + item.results_date) : ''].filter(Boolean).join(' · ');
-  push('Сроки', sroki);
-  push('Итоги / статус', [item.results_summary, item.status].filter(Boolean).join(' · '));
-  if (item.amount.avg_award) push('Средний размер в прошлом отборе', `≈ ${item.amount.avg_award} млн руб. (по ${item.amount.avg_count} проектам)`);
-  if (item.amount.note) push('Пояснение к сумме', item.amount.note);
-  push('Контакты', item.contacts);
-  push('Ссылка', linkify(item.link));
-  push('Заметка', item.note);
-  const basisChip = BASIS_LABELS[item.amount.basis] ? `<div class="reasons"><span class="chip chip-basis">${BASIS_LABELS[item.amount.basis]}</span></div>` : '';
-  return `
-  <div class="card category-${item.category}" style="--accent:${color}" data-search="${(item.title+' '+item.org+' '+item.program+' '+item.what_for).toLowerCase().replace(/"/g,'')}">
-    <div class="cat-bar">
-      <div class="org">${item.org}</div>
-      ${item.program ? `<div class="prog">${item.program}</div>` : ''}
-      <div class="seal">${CAT_SEAL[item.category]}</div>
-    </div>
-    ${basisChip}
-    <div class="rows">${rows.join('')}</div>
-  </div>`;
-}
-
 function renderAll(){
-  const root = document.getElementById('catalog-root');
-  const quicknav = document.getElementById('quicknav');
-  let navHtml = '';
-  let bodyHtml = '';
-  BLOCKS.forEach(b => {
-    const its = ITEMS.filter(i => i.block === b.num);
-    navHtml += `<a href="#block-${b.num}">${b.num}. ${b.title} (${its.length})</a>`;
-    bodyHtml += `
-    <div class="block-heading" id="block-${b.num}">
-      <div class="num">${String(b.num).padStart(2,'0')}</div>
-      <h2>${b.title}</h2>
-    </div>
-    <div class="block-count">${its.length} источник(ов)</div>
-    <div class="results-grid" data-block="${b.num}">
-      ${its.map(renderCard).join('')}
-    </div>`;
-  });
-  quicknav.innerHTML = navHtml;
-  root.innerHTML = bodyHtml;
+  document.getElementById('quicknav').innerHTML=BLOCKS.map(b=>`<a href="#block-${b.num}">${b.num}. ${b.title} (${ITEMS.filter(i=>i.block===b.num).length})</a>`).join('');
+  document.getElementById('catalog-root').innerHTML=BLOCKS.map(b=>{const items=ITEMS.filter(i=>i.block===b.num);return `<div class="block-heading" id="block-${b.num}"><div class="num">${String(b.num).padStart(2,'0')}</div><h2>${b.title}</h2></div><div class="block-count">${items.length} источник(ов)</div><div class="results-grid" data-block="${b.num}">${items.map(card).join('')}</div>`;}).join('');
 }
-
-function applySearch(){
-  const q = document.getElementById('f-query').value.trim().toLowerCase();
-  const cats = Array.from(document.querySelectorAll('.cat-checks input:checked')).map(x=>x.value);
-  let visibleCount = 0;
-  document.querySelectorAll('.card').forEach(card => {
-    const hay = card.getAttribute('data-search');
-    const cat = card.querySelector('.seal').textContent;
-    const catKey = Object.keys(CAT_SEAL).find(k => CAT_SEAL[k] === cat);
-    const okQuery = !q || hay.includes(q);
-    const okCat = cats.includes(catKey);
-    const show = okQuery && okCat;
-    card.style.display = show ? '' : 'none';
-    if (show) visibleCount++;
-  });
-  document.querySelectorAll('[data-block]').forEach(grid => {
-    const anyVisible = Array.from(grid.querySelectorAll('.card')).some(c => c.style.display !== 'none');
-    grid.previousElementSibling.style.display = anyVisible ? '' : 'none';
-    grid.previousElementSibling.previousElementSibling.style.display = anyVisible ? '' : 'none';
-    grid.style.display = anyVisible ? '' : 'none';
-  });
-  document.getElementById('results-count').textContent = `Показано: ${visibleCount} из ${ITEMS.length}`;
+function apply(){
+  const q=document.getElementById('f-query').value.trim().toLowerCase();const cats=[...document.querySelectorAll('.cat-checks input:checked')].map(x=>x.value);let n=0;
+  document.querySelectorAll('.card').forEach(c=>{const show=cats.includes(c.dataset.cat)&&(!q||c.dataset.search.includes(q));c.style.display=show?'':'none';if(show)n++;});
+  document.querySelectorAll('[data-block]').forEach(g=>{const show=[...g.querySelectorAll('.card')].some(c=>c.style.display!=='none');g.style.display=show?'':'none';g.previousElementSibling.style.display=show?'':'none';g.previousElementSibling.previousElementSibling.style.display=show?'':'none';});
+  document.getElementById('results-count').textContent=`Показано: ${n} из ${ITEMS.length}`;
 }
-
 async function boot(){
-  const files = Array.from({length: 9}, (_, i) => `./data-${String(i).padStart(2,'0')}.json`);
-  const parts = await Promise.all(files.map(async file => {
-    const res = await fetch(file, {cache:'no-store'});
-    if (!res.ok) throw new Error(`Не удалось загрузить ${file}`);
-    return res.json();
-  }));
-  ITEMS = parts.flatMap(part => part.items || []);
-  const seen = new Map();
-  ITEMS.forEach(i => { if (!seen.has(i.block)) seen.set(i.block, i.block_title); });
-  BLOCKS = Array.from(seen.entries()).map(([num,title])=>({num,title})).sort((a,b)=>a.num-b.num);
-  renderAll();
-  document.getElementById('results-count').textContent = `Показано: ${ITEMS.length} из ${ITEMS.length}`;
-  document.getElementById('f-query').addEventListener('input', applySearch);
-  document.querySelectorAll('.cat-checks input').forEach(el => el.addEventListener('change', applySearch));
-  document.getElementById('reset-btn').addEventListener('click', () => {
-    document.getElementById('f-query').value = '';
-    document.querySelectorAll('.cat-checks input').forEach(x=>x.checked = true);
-    applySearch();
-  });
+  const files=Array.from({length:9},(_,i)=>`./data-${String(i).padStart(2,'0')}.json`);const parts=await Promise.all(files.map(async f=>{const r=await fetch(f,{cache:'no-store'});return r.json();}));ITEMS=parts.flatMap(p=>p.items||[]);
+  const seen=new Map();ITEMS.forEach(i=>{if(!seen.has(i.block))seen.set(i.block,i.block_title);});BLOCKS=[...seen.entries()].map(([num,title])=>({num,title})).sort((a,b)=>a.num-b.num);renderAll();apply();
+  document.getElementById('f-query').addEventListener('input',apply);document.querySelectorAll('.cat-checks input').forEach(x=>x.addEventListener('change',apply));document.getElementById('reset-btn').addEventListener('click',()=>{document.getElementById('f-query').value='';document.querySelectorAll('.cat-checks input').forEach(x=>x.checked=true);apply();});
 }
-document.addEventListener('DOMContentLoaded', boot);
+document.addEventListener('DOMContentLoaded',boot);
 </script>
 </body>
 </html>
