@@ -479,10 +479,10 @@
     const bar = document.createElement('div');
     bar.className = 'mvp-exportbar';
     bar.hidden = true;
-    bar.innerHTML = '<button type="button" data-export-csv>Экспорт CSV</button><button type="button" data-export-pdf>Сохранить PDF</button><button type="button" data-copy-link>Скопировать ссылку на подбор</button><span class="mvp-export-note">PDF создаётся через системное окно печати браузера</span>';
+    bar.innerHTML = '<button type="button" data-export-csv>Экспорт CSV</button><button type="button" data-export-pdf>Скачать PDF</button><button type="button" data-copy-link>Скопировать ссылку на подбор</button><span class="mvp-export-note">PDF собирается как документ: текст можно выделять и искать</span>';
     head.insertAdjacentElement('afterend', bar);
     bar.querySelector('[data-export-csv]').addEventListener('click', exportCsv);
-    bar.querySelector('[data-export-pdf]').addEventListener('click', () => { document.body.classList.add('mvp-print-results'); window.print(); setTimeout(() => document.body.classList.remove('mvp-print-results'), 1000); });
+    bar.querySelector('[data-export-pdf]').addEventListener('click', exportPdf);
     bar.querySelector('[data-copy-link]').addEventListener('click', copySelectionLink);
     document.getElementById('go-btn')?.addEventListener('click', () => setTimeout(syncExportBar, 20));
     document.getElementById('reset-btn')?.addEventListener('click', () => setTimeout(syncExportBar, 20));
@@ -500,6 +500,30 @@
 
   function csvCell(value) {
     return `"${String(value || '').replace(/"/g, '""')}"`;
+  }
+
+  function exportPdf(event) {
+    const selected = visibleResultItems();
+    if (!selected.length) return toast('Сначала выполните подбор');
+    if (typeof window.KINO_PDF_EXPORT !== 'function') return toast('Модуль PDF не загрузился');
+
+    const button = event?.currentTarget;
+    const label = button?.textContent;
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'Готовим PDF…';
+    }
+    Promise.resolve(window.KINO_PDF_EXPORT(selected))
+      .catch(error => {
+        console.error('Не удалось собрать PDF', error);
+        toast('Не удалось собрать PDF');
+      })
+      .finally(() => {
+        if (button) {
+          button.disabled = false;
+          button.textContent = label;
+        }
+      });
   }
 
   function exportCsv() {
