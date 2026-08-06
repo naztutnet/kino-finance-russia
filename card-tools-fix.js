@@ -111,6 +111,15 @@
     });
   }
 
+  function loadFavoritesSubmissions() {
+    if (document.querySelector('script[data-favorites-submissions]')) return;
+    const script = document.createElement('script');
+    script.src = 'favorites-submissions.js?v=202608061412';
+    script.defer = true;
+    script.dataset.favoritesSubmissions = 'true';
+    document.head.appendChild(script);
+  }
+
   function syncUi() {
     setupNavigation();
     reorderPrimaryActions();
@@ -124,6 +133,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    loadFavoritesSubmissions();
     scheduleUiSync();
 
     document.addEventListener('click', event => {
