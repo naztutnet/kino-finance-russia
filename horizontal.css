@@ -8,7 +8,8 @@
   grid-template-columns:minmax(230px,310px) minmax(0,1fr);
   grid-template-areas:
     "head rows"
-    "chips rows";
+    "chips rows"
+    "tools tools";
   align-items:start;
   gap:8px 14px;
   padding:12px;
@@ -73,7 +74,8 @@
     grid-template-areas:
       "head"
       "chips"
-      "rows";
+      "rows"
+      "tools";
   }
   .card .rows{
     grid-template-columns:1fr;

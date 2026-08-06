@@ -183,7 +183,7 @@
       saveState();
       event.currentTarget.classList.toggle('active', rec.favorite);
       event.currentTarget.textContent = rec.favorite ? '★ В избранном' : '☆ В избранное';
-      renderMySubmissions();
+      renderFavorites();
     });
 
     tools.querySelector('[data-mvp-status]').addEventListener('change', event => {
@@ -217,8 +217,12 @@
     cards.forEach(enhanceCard);
   }
 
-  function trackedIds() {
-    return Object.entries(state.records).filter(([, r]) => r.favorite || r.status).map(([id]) => id).filter(id => byId.has(id));
+  function favoriteIds() {
+    return Object.entries(state.records).filter(([, r]) => r.favorite).map(([id]) => id).filter(id => byId.has(id));
+  }
+
+  function submissionIds() {
+    return Object.entries(state.records).filter(([, r]) => r.status).map(([id]) => id).filter(id => byId.has(id));
   }
 
   function injectHeaderTools() {
@@ -227,8 +231,9 @@
     if (!nav) return;
     const tools = document.createElement('div');
     tools.className = 'mvp-header-tools';
-    tools.innerHTML = `<button type="button" class="mvp-button" data-open-my>Мои подачи <strong data-my-count>0</strong></button><button type="button" class="mvp-button" data-open-compare-modal>Сравнение <strong data-compare-count>0</strong></button>`;
+    tools.innerHTML = `<button type="button" class="mvp-button" data-open-favorites>Избранное <strong data-favorites-count>0</strong></button><button type="button" class="mvp-button" data-open-my>Мои подачи <strong data-my-count>0</strong></button><button type="button" class="mvp-button" data-open-compare-modal>Сравнение <strong data-compare-count>0</strong></button>`;
     nav.insertAdjacentElement('afterend', tools);
+    tools.querySelector('[data-open-favorites]').addEventListener('click', () => openModal('mvp-favorites-modal'));
     tools.querySelector('[data-open-my]').addEventListener('click', () => openModal('mvp-my-modal'));
     tools.querySelector('[data-open-compare-modal]').addEventListener('click', () => openModal('mvp-compare-modal'));
   }
@@ -236,37 +241,84 @@
   function injectModals() {
     if (document.getElementById('mvp-my-modal')) return;
     document.body.insertAdjacentHTML('beforeend', `
+      <div class="mvp-modal-backdrop" id="mvp-favorites-modal" role="dialog" aria-modal="true" aria-label="Избранное">
+        <div class="mvp-modal"><div class="mvp-modal-head"><h2>Избранное</h2><button class="mvp-modal-close" data-close-modal aria-label="Закрыть">×</button></div>
+        <div class="mvp-modal-actions"><button data-download-favorites>Скачать календарь избранного .ICS</button><button data-clear-favorites>Очистить избранное</button></div><div data-favorites-list></div></div>
+      </div>
       <div class="mvp-modal-backdrop" id="mvp-my-modal" role="dialog" aria-modal="true" aria-label="Мои подачи">
         <div class="mvp-modal"><div class="mvp-modal-head"><h2>Мои подачи</h2><button class="mvp-modal-close" data-close-modal aria-label="Закрыть">×</button></div>
-        <div class="mvp-modal-actions"><button data-download-tracked>Скачать календарь выбранных .ICS</button><button data-clear-tracked>Очистить список</button></div><div data-my-list></div></div>
+        <div class="mvp-modal-actions"><button data-download-tracked>Скачать календарь подач .ICS</button><button data-clear-tracked>Очистить мои подачи</button></div><div data-my-list></div></div>
       </div>
       <div class="mvp-modal-backdrop" id="mvp-compare-modal" role="dialog" aria-modal="true" aria-label="Сравнение источников">
         <div class="mvp-modal"><div class="mvp-modal-head"><h2>Сравнение источников</h2><button class="mvp-modal-close" data-close-modal aria-label="Закрыть">×</button></div><div data-compare-body></div></div>
       </div>`);
     document.querySelectorAll('[data-close-modal]').forEach(button => button.addEventListener('click', () => button.closest('.mvp-modal-backdrop').classList.remove('open')));
     document.querySelectorAll('.mvp-modal-backdrop').forEach(backdrop => backdrop.addEventListener('click', event => { if (event.target === backdrop) backdrop.classList.remove('open'); }));
-    document.querySelector('[data-download-tracked]').addEventListener('click', () => downloadIcs(trackedIds().map(id => byId.get(id))));
-    document.querySelector('[data-clear-tracked]').addEventListener('click', () => {
-      if (!trackedIds().length) return;
-      state.records = {};
+
+    document.querySelector('[data-download-favorites]').addEventListener('click', () => downloadIcs(favoriteIds().map(id => byId.get(id))));
+    document.querySelector('[data-clear-favorites]').addEventListener('click', () => {
+      const ids = favoriteIds();
+      if (!ids.length) return;
+      ids.forEach(id => { state.records[id].favorite = false; cleanRecord(id); });
       saveState();
       document.querySelectorAll('[data-mvp-favorite]').forEach(button => { button.classList.remove('active'); button.textContent = '☆ В избранное'; });
+      renderFavorites();
+    });
+
+    document.querySelector('[data-download-tracked]').addEventListener('click', () => downloadIcs(submissionIds().map(id => byId.get(id))));
+    document.querySelector('[data-clear-tracked]').addEventListener('click', () => {
+      const ids = submissionIds();
+      if (!ids.length) return;
+      ids.forEach(id => { state.records[id].status = ''; cleanRecord(id); });
+      saveState();
       document.querySelectorAll('[data-mvp-status]').forEach(select => { select.value = ''; });
       renderMySubmissions();
     });
   }
 
   function openModal(id) {
-    if (id === 'mvp-my-modal') renderMySubmissions(); else renderCompare();
+    if (id === 'mvp-favorites-modal') renderFavorites();
+    else if (id === 'mvp-my-modal') renderMySubmissions();
+    else renderCompare();
     document.getElementById(id)?.classList.add('open');
+  }
+
+  function renderFavorites() {
+    const root = document.querySelector('[data-favorites-list]');
+    if (!root) return;
+    const ids = favoriteIds();
+    if (!ids.length) {
+      root.innerHTML = '<div class="mvp-empty">Здесь появятся источники, отмеченные кнопкой «В избранное». Это закладки: статус подачи им назначать не обязательно.</div>';
+      updateGlobalCounts();
+      return;
+    }
+    root.innerHTML = `<div class="mvp-submission-list">${ids.map(id => {
+      const item = byId.get(id);
+      const next = nextRelevantDate(item);
+      const source = urlFor(item.link);
+      return `<div class="mvp-submission-row mvp-favorite-row" data-favorite-id="${id}"><div><strong>${escapeHtml(item.org)}</strong><small>${escapeHtml(item.program || item.title || '')}${next ? ` · ближайшая дата ${formatDate(next.date)}` : ' · точной будущей даты нет'}</small></div><div class="mvp-submission-actions">${source ? `<a class="mvp-rowlink" href="${escapeHtml(source)}" target="_blank" rel="noopener noreferrer">Источник</a>` : ''}<button data-favorite-ics ${next ? '' : 'disabled'}>.ICS</button><button data-favorite-remove>Убрать</button></div></div>`;
+    }).join('')}</div>`;
+    root.querySelectorAll('[data-favorite-id]').forEach(row => {
+      const id = row.dataset.favoriteId;
+      row.querySelector('[data-favorite-ics]').addEventListener('click', () => downloadIcs([byId.get(id)]));
+      row.querySelector('[data-favorite-remove]').addEventListener('click', () => {
+        const rec = recordFor(id);
+        rec.favorite = false;
+        cleanRecord(id);
+        saveState();
+        syncCardControls(id);
+        renderFavorites();
+      });
+    });
+    updateGlobalCounts();
   }
 
   function renderMySubmissions() {
     const root = document.querySelector('[data-my-list]');
     if (!root) return;
-    const ids = trackedIds();
+    const ids = submissionIds();
     if (!ids.length) {
-      root.innerHTML = '<div class="mvp-empty">Здесь появятся избранные источники и программы, для которых вы установили статус подачи.</div>';
+      root.innerHTML = '<div class="mvp-empty">Здесь появятся источники, которым вы назначили статус подачи: «Планирую подаваться», «Заявка подана», «Жду результаты» или «Не подходит».</div>';
       updateGlobalCounts();
       return;
     }
@@ -274,15 +326,13 @@
       const item = byId.get(id);
       const record = recordFor(id);
       const next = nextRelevantDate(item);
-      return `<div class="mvp-submission-row" data-my-id="${id}"><div><strong>${escapeHtml(item.org)}</strong><small>${escapeHtml(item.program || item.title || '')}${next ? ` · ближайшая дата ${formatDate(next.date)}` : ' · точной будущей даты нет'}</small></div><select data-my-status>${statusOptions(record.status)}</select><div class="mvp-submission-actions"><button data-my-favorite>${record.favorite ? '★ Избранное' : '☆ Избранное'}</button><button data-my-ics ${next ? '' : 'disabled'}>.ICS</button><button data-my-remove>Удалить</button></div></div>`;
+      return `<div class="mvp-submission-row" data-my-id="${id}"><div><strong>${escapeHtml(item.org)}</strong><small>${escapeHtml(item.program || item.title || '')}${next ? ` · ближайшая дата ${formatDate(next.date)}` : ' · точной будущей даты нет'}</small></div><select data-my-status>${statusOptions(record.status)}</select><div class="mvp-submission-actions"><button data-my-ics ${next ? '' : 'disabled'}>.ICS</button><button data-my-remove>Убрать</button></div></div>`;
     }).join('')}</div>`;
     root.querySelectorAll('[data-my-id]').forEach(row => {
       const id = row.dataset.myId;
-      const item = byId.get(id);
       row.querySelector('[data-my-status]').addEventListener('change', event => { const rec = recordFor(id); rec.status = event.target.value; cleanRecord(id); saveState(); syncCardControls(id); renderMySubmissions(); });
-      row.querySelector('[data-my-favorite]').addEventListener('click', () => { const rec = recordFor(id); rec.favorite = !rec.favorite; cleanRecord(id); saveState(); syncCardControls(id); renderMySubmissions(); });
-      row.querySelector('[data-my-ics]').addEventListener('click', () => downloadIcs([item]));
-      row.querySelector('[data-my-remove]').addEventListener('click', () => { delete state.records[id]; saveState(); syncCardControls(id); renderMySubmissions(); });
+      row.querySelector('[data-my-ics]').addEventListener('click', () => downloadIcs([byId.get(id)]));
+      row.querySelector('[data-my-remove]').addEventListener('click', () => { const rec = recordFor(id); rec.status = ''; cleanRecord(id); saveState(); syncCardControls(id); renderMySubmissions(); });
     });
     updateGlobalCounts();
   }
@@ -336,7 +386,8 @@
   }
 
   function updateGlobalCounts() {
-    document.querySelectorAll('[data-my-count]').forEach(node => { node.textContent = trackedIds().length; });
+    document.querySelectorAll('[data-favorites-count]').forEach(node => { node.textContent = favoriteIds().length; });
+    document.querySelectorAll('[data-my-count]').forEach(node => { node.textContent = submissionIds().length; });
     document.querySelectorAll('[data-compare-count]').forEach(node => { node.textContent = state.compare.length; });
   }
 
@@ -519,6 +570,7 @@
       injectExportBar();
       enhanceCards(document);
       applyUrlParameters();
+      renderFavorites();
       renderMySubmissions();
       renderCompare();
       updateGlobalCounts();

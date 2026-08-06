@@ -38,7 +38,7 @@ header.site{
   background:#fff;
   color:var(--ink);
   padding:38px 0 24px;
-  border-bottom:1.5px dashed var(--line);
+  border-bottom:1.5px solid var(--line);
 }
 header.site .eyebrow{
   margin-bottom:8px;
@@ -69,7 +69,7 @@ nav.tabs a{
   align-items:center;
   min-height:38px;
   padding:8px 14px;
-  border:1px dashed var(--line);
+  border:1px solid var(--line);
   border-radius:7px;
   background:#fff;
   color:var(--ink);
@@ -78,7 +78,7 @@ nav.tabs a{
   text-decoration:none;
 }
 nav.tabs a:hover{background:var(--soft);}
-nav.tabs a.active{background:var(--ink);color:#fff;border-style:solid;}
+nav.tabs a.active{background:var(--ink);color:#fff;}
 nav.tabs a:first-child::before{content:'🧭';margin-right:7px;}
 nav.tabs a:last-child::before{content:'🗂️';margin-right:7px;}
 
@@ -87,7 +87,7 @@ nav.tabs a:last-child::before{content:'🗂️';margin-right:7px;}
   margin-top:26px;
   padding:20px;
   background:#fff;
-  border:1.5px dashed var(--line);
+  border:1.5px solid var(--line);
   border-radius:9px;
 }
 .panel h2{
@@ -171,7 +171,7 @@ button.primary,button.ghost{
 }
 button.primary{background:var(--ink);color:#fff;border:1px solid var(--ink);}
 button.primary:hover{background:#333;}
-button.ghost{background:#fff;color:var(--ink);border:1px dashed var(--line);}
+button.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);}
 button.ghost:hover{background:var(--soft);}
 
 .results-head{
@@ -196,7 +196,7 @@ button.ghost:hover{background:var(--soft);}
   min-width:0;
   padding:10px;
   background:#fff;
-  border:1px dashed #8c8c8c;
+  border:1px solid #8c8c8c;
   border-radius:8px;
   display:flex;
   flex-direction:column;
@@ -270,7 +270,7 @@ button.ghost:hover{background:var(--soft);}
   padding:42px 22px;
   color:#444;
   background:var(--soft);
-  border:1px dashed var(--line);
+  border:1px solid var(--line);
   border-radius:8px;
   text-align:center;
   font-size:14px;
@@ -281,7 +281,7 @@ button.ghost:hover{background:var(--soft);}
   padding:12px 14px;
   color:#222;
   background:#fff;
-  border:1px dashed var(--line);
+  border:1px solid var(--line);
   border-radius:7px;
   font-size:12px;
   line-height:1.4;
@@ -297,8 +297,8 @@ button.ghost:hover{background:var(--soft);}
   margin:0 0 22px;
   padding:10px 0;
   background:rgba(255,255,255,.96);
-  border-top:1px dashed var(--line);
-  border-bottom:1px dashed var(--line);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
   backdrop-filter:blur(7px);
 }
 .quicknav a{
@@ -320,7 +320,7 @@ button.ghost:hover{background:var(--soft);}
   margin:31px 0 6px;
   padding:11px 13px;
   background:#fff;
-  border:1px dashed var(--line);
+  border:1px solid var(--line);
   border-radius:7px;
   scroll-margin-top:68px;
 }
@@ -343,7 +343,7 @@ footer.site{
   padding:17px 18px;
   color:#4a4a4a;
   background:#fff;
-  border:1px dashed var(--line);
+  border:1px solid var(--line);
   border-radius:8px;
   font-size:11.5px;
   line-height:1.55;
@@ -374,7 +374,7 @@ footer.site strong{color:var(--ink);}
 @media print{
   body{font-size:10pt;}
   .wrap{max-width:none;padding:0;}
-  header.site{padding:0 0 12mm;border-bottom:1px dashed #000;}
+  header.site{padding:0 0 12mm;border-bottom:1px solid #000;}
   nav.tabs,.panel,.quicknav{display:none!important;}
   .results-grid{grid-template-columns:repeat(2,1fr);gap:6mm;}
   .card{page-break-inside:avoid;}
