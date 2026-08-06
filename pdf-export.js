@@ -24,7 +24,7 @@
   }
 
   function escapeHtml(value = '') {
-    return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
   }
 
   function currentFilters() {
@@ -54,9 +54,21 @@
     });
   }
 
+  function removeDuplicateRequirementRows(root) {
+    root.querySelectorAll('.row').forEach(row => {
+      const label = (row.querySelector('.k')?.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+      const value = (row.querySelector('.v')?.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+      const duplicateLabel = label === 'требования к подаче';
+      const duplicateContent = value.includes('открыть требования к подаче') &&
+        (value.includes('документы:') || value.includes('как подавать:') || value.includes('параметры для фильтра:'));
+      if (duplicateLabel || duplicateContent) row.remove();
+    });
+  }
+
   function cleanCard(card) {
     const clone = card.cloneNode(true);
     clone.removeAttribute('style');
+    removeDuplicateRequirementRows(clone);
     clone.querySelectorAll('button, select, .mvp-card-actions, .mvp-actions-row').forEach(node => node.remove());
     clone.querySelectorAll('.mvp-card-tools').forEach(tools => {
       const verification = tools.querySelector('.mvp-verification');
@@ -67,9 +79,9 @@
         tools.replaceWith(wrapper);
       } else tools.remove();
     });
-    clone.querySelectorAll('details').forEach(details => {
-      details.open = false;
-      details.removeAttribute('open');
+    clone.querySelectorAll('details.application-requirements').forEach(details => {
+      details.open = true;
+      details.setAttribute('open', '');
     });
     clone.querySelectorAll('a').forEach(anchor => {
       anchor.setAttribute('target', '_blank');
@@ -150,6 +162,7 @@
       .pdf-results-list .row a{color:#111!important;text-decoration:underline!important}
       .pdf-results-list .application-requirements{margin-top:2px!important;border:1px solid #bbb!important;background:#fff!important}
       .pdf-results-list .application-requirements summary{padding:9px 10px!important;font-size:11px!important}
+      .pdf-results-list .requirements-body{display:block!important}
       .pdf-verification{grid-area:verification;margin-top:8px;padding:9px 11px;border-radius:6px;background:#fafafa;border:1px dashed #aaa}
       .pdf-verification .mvp-verification{display:flex!important;gap:8px!important}
       .pdf-verification strong{font-size:10px!important}
@@ -207,7 +220,7 @@
       exportNode?.remove();
       document.body.classList.remove('pdf-export-busy');
       button.disabled = false;
-      button.textContent = originalText;
+      button.textContent = 'Экспорт в PDF';
     }
   }
 
@@ -216,7 +229,7 @@
     if (!current || current.dataset.directPdf === '1') return Boolean(current);
     const replacement = current.cloneNode(true);
     replacement.dataset.directPdf = '1';
-    replacement.textContent = 'Скачать красивый PDF';
+    replacement.textContent = 'Экспорт в PDF';
     current.replaceWith(replacement);
     replacement.addEventListener('click', event => {
       event.preventDefault();
@@ -224,7 +237,7 @@
       exportPdf(replacement);
     });
     const note = replacement.closest('.mvp-exportbar')?.querySelector('.mvp-export-note');
-    if (note) note.textContent = 'PDF скачивается напрямую и повторяет оформление результатов сайта';
+    if (note) note.textContent = 'PDF скачивается напрямую';
     return true;
   }
 
