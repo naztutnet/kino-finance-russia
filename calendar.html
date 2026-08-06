@@ -44,7 +44,7 @@
   </section>
 
   <section class="calendar-notice">
-    <strong>Принцип проверки:</strong> если организатор не назвал точный день, календарь показывает «Дата ожидается», а не вычисленную или предполагаемую дату.
+    <strong>Принцип проверки:</strong> если организатор не назвал точный день, календарь показывает «Дата ожидается», а не вычисленную или предполагаемую дату. Кнопка «Подать заявку» показывается только для действующего приёма.
   </section>
 </main>
 
@@ -55,6 +55,28 @@ const list=document.getElementById('deadlineList');
 const search=document.getElementById('calendarSearch');
 function esc(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
 function link(url,label){return url?`<a href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:'';}
+function isSubmission(item){return String(item.kind||item.event_type||'').toLowerCase().includes('подач');}
+function deadlineDate(item){
+  const value=String(item.date_iso||item.sort||'');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(value))return null;
+  const date=new Date(`${value}T23:59:59`);
+  return Number.isNaN(date.getTime())?null:date;
+}
+function effectiveStatus(item){
+  const original=String(item.status||'wait').toLowerCase();
+  const deadline=deadlineDate(item);
+  if(isSubmission(item)&&deadline&&deadline<new Date())return'closed';
+  return original;
+}
+function effectiveStatusText(item,status){
+  if(status==='closed')return'Приём завершён';
+  if(status==='open')return item.statusText||item.status_text||'Приём открыт';
+  return item.statusText||item.status_text||'Дата ожидается';
+}
+function canApply(item){
+  const deadline=deadlineDate(item);
+  return effectiveStatus(item)==='open'&&(!deadline||deadline>=new Date());
+}
 function render(){
   const q=search.value.trim().toLowerCase();
   const filtered=items.filter(i=>{
@@ -63,18 +85,19 @@ function render(){
     return(selectedYear==='all'||year===selectedYear)&&(!q||hay.includes(q));
   }).sort((a,b)=>String(a.sort||a.date_iso||'9999').localeCompare(String(b.sort||b.date_iso||'9999')));
   document.getElementById('allCount').textContent=items.length;
-  document.getElementById('openCount').textContent=items.filter(i=>(i.status||'').toLowerCase()==='open').length;
+  document.getElementById('openCount').textContent=items.filter(i=>effectiveStatus(i)==='open').length;
   document.getElementById('resultCount').textContent=items.filter(i=>(i.kind||i.event_type||'').toLowerCase().includes('результ')).length;
-  document.getElementById('waitCount').textContent=items.filter(i=>(i.status||'').toLowerCase()==='wait'||String(i.date||'').toLowerCase().includes('ожида')).length;
+  document.getElementById('waitCount').textContent=items.filter(i=>effectiveStatus(i)==='wait'||String(i.date||'').toLowerCase().includes('ожида')).length;
   if(!filtered.length){list.innerHTML='<div class="calendar-empty">По выбранным параметрам событий нет.</div>';return;}
   list.innerHTML=filtered.map(i=>{
-    const status=(i.status||'wait').toLowerCase();
+    const status=effectiveStatus(i);
     const date=i.date||i.deadline||i.date_label||'Дата ожидается';
     const year=i.year||i.program_year||'';
     const organizer=i.organizer||i.fund||'';
     const title=i.title||i.program||'';
     const note=i.note||i.description||'';
-    return `<article class="deadline-card"><div class="date-box"><strong>${esc(date)}</strong><span>${esc(year)} · ${esc(i.kind||i.event_type||'Событие')}</span></div><div><span class="status ${esc(status)}">${esc(i.statusText||i.status_text||'Дата ожидается')}</span><h3>${esc(organizer)}</h3><p>${esc(title)}</p></div><div><p>${esc(note)}</p><div class="deadline-actions">${link(i.apply||i.application_url,'Подать заявку')}${link(i.results||i.results_url,'Результаты')}${link(i.source||i.source_url,'Официальный источник')}</div></div></article>`;
+    const applyLink=canApply(i)?link(i.apply||i.application_url,'Подать заявку'):'';
+    return `<article class="deadline-card"><div class="date-box"><strong>${esc(date)}</strong><span>${esc(year)} · ${esc(i.kind||i.event_type||'Событие')}</span></div><div><span class="status ${esc(status)}">${esc(effectiveStatusText(i,status))}</span><h3>${esc(organizer)}</h3><p>${esc(title)}</p></div><div><p>${esc(note)}</p><div class="deadline-actions">${applyLink}${link(i.results||i.results_url,'Результаты')}${link(i.source||i.source_url,'Официальный источник')}</div></div></article>`;
   }).join('');
 }
 async function load(){
