@@ -48,9 +48,19 @@
     if (reset && actions.lastElementChild !== reset) actions.appendChild(reset);
   }
 
+  function loadPdfExporter() {
+    if (document.querySelector('script[data-pdf-exporter]')) return;
+    const script = document.createElement('script');
+    script.src = 'pdf-export.js?v=202608061239';
+    script.defer = true;
+    script.dataset.pdfExporter = 'true';
+    document.head.appendChild(script);
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     setupNavigation();
     reorderPrimaryActions();
+    loadPdfExporter();
 
     document.addEventListener('click', event => {
       if (event.target.closest('[data-mvp-favorite],[data-open-my],[data-favorites-nav]')) {
