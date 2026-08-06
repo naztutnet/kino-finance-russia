@@ -7,13 +7,13 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>Помощник в поиске финансирования вашего проекта</title>
-<link rel="stylesheet" href="style.css?v=202608061115">
-<link rel="stylesheet" href="horizontal.css?v=202608061115">
-<link rel="stylesheet" href="mvp.css?v=202608061115">
-<link rel="stylesheet" href="card-tools-fix.css?v=202608061115">
-<script src="enhancements.js?v=202608061115" defer></script>
-<script src="mvp.js?v=202608061115" defer></script>
-<script src="card-tools-fix.js?v=202608061115" defer></script>
+<link rel="stylesheet" href="style.css?v=202608061146">
+<link rel="stylesheet" href="horizontal.css?v=202608061146">
+<link rel="stylesheet" href="mvp.css?v=202608061146">
+<link rel="stylesheet" href="card-tools-fix.css?v=202608061146">
+<script src="enhancements.js?v=202608061146" defer></script>
+<script src="mvp.js?v=202608061146" defer></script>
+<script src="card-tools-fix.js?v=202608061146" defer></script>
 </head>
 <body>
 <header class="site">
@@ -23,8 +23,8 @@
     <p class="sub">Укажите параметры проекта — инструмент подберёт подходящие фонды, рибейты, питчинги и гранты из базы источников.</p>
     <nav class="tabs">
       <a href="index.html" class="active">Помощник</a>
-      <a href="calendar.html">Календарь</a>
       <a href="istochniki.html">Все источники</a>
+      <a href="calendar.html">Календарь</a>
     </nav>
   </div>
 </header>
@@ -32,7 +32,7 @@
 <div class="wrap">
   <div class="panel">
     <h2>Параметры проекта</h2>
-    <div class="grid-filters grid-filters-3">
+    <div class="grid-filters grid-filters-4">
       <div class="field">
         <label for="f-type">Тип проекта</label>
         <select id="f-type">
@@ -58,10 +58,14 @@
           <option value="any">Не важно / без привязки</option>
         </select>
       </div>
+      <div class="field">
+        <label for="f-query">Поиск по названию</label>
+        <input type="text" id="f-query" placeholder="например, Кинопрайм">
+      </div>
     </div>
 
-    <div class="grid-filters" style="margin-top:16px;">
-      <div class="field" style="grid-column:span 3;">
+    <div class="grid-filters categories-only-grid" style="margin-top:16px;">
+      <div class="field">
         <label>Категории источников</label>
         <div class="cat-checks">
           <label><input type="checkbox" value="gov" checked> Государственный</label>
@@ -71,10 +75,6 @@
           <label><input type="checkbox" value="grant" checked> Грант / лаборатория / акселератор</label>
           <label><input type="checkbox" value="intl" checked> Международный</label>
         </div>
-      </div>
-      <div class="field">
-        <label for="f-query">Поиск по названию</label>
-        <input type="text" id="f-query" placeholder="например, Кинопрайм">
       </div>
     </div>
 
@@ -179,7 +179,7 @@ function reset(){
   hideResults();
 }
 async function boot(){
-  const files=Array.from({length:9},(_,i)=>`./data-${String(i).padStart(2,'0')}.json`);
+  const files=Array.from({length:10},(_,i)=>`./data-${String(i).padStart(2,'0')}.json`);
   const parts=await Promise.all(files.map(async file=>{const r=await fetch(file,{cache:'no-store'});if(!r.ok)throw new Error(file);return r.json();}));
   ITEMS=parts.flatMap(p=>p.items||[]);
   initFilters();
