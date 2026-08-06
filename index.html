@@ -80,11 +80,11 @@
     </div>
   </div>
 
-  <div class="results-head">
+  <div class="results-head" id="results-head" hidden>
     <h2>Результаты</h2>
     <div class="count" id="results-count">—</div>
   </div>
-  <div class="results-grid" id="results-grid"></div>
+  <div class="results-grid" id="results-grid" hidden></div>
 
   <footer class="site">
     Полный список источников доступен на странице «Все источники», а сроки подач и результатов — в разделе «Календарь». Данные соответствуют рабочей базе 0.4 от 2026-08-05. Перед подачей заявки сверяйтесь с официальным источником.
@@ -144,28 +144,43 @@ function card(i,reasons){
   const chips=reasons.map(r=>`<span class="chip">${r}</span>`).join('')+basis;
   return `<article class="card" style="--accent:var(--${i.category})"><div class="cat-bar"><div class="org">${i.org}</div>${i.program?`<div class="prog">${i.program}</div>`:''}<div class="seal">${CAT_SEAL[i.category]}</div></div>${chips?`<div class="reasons">${chips}</div>`:''}<div class="rows">${rows.join('')}</div></article>`;
 }
+function hideResults(){
+  const head=document.getElementById('results-head');
+  const grid=document.getElementById('results-grid');
+  head.hidden=true;
+  grid.hidden=true;
+  document.getElementById('results-count').textContent='—';
+  grid.innerHTML='';
+}
 function render(){
   const f=filters();
   const matched=ITEMS.filter(i=>passes(i,f)).map(i=>({i,...score(i,f)})).sort((a,b)=>b.n-a.n||a.i.title.localeCompare(b.i.title,'ru'));
+  const head=document.getElementById('results-head');
+  const grid=document.getElementById('results-grid');
+  head.hidden=false;
+  grid.hidden=false;
   document.getElementById('results-count').textContent=`Найдено: ${matched.length}`;
-  document.getElementById('results-grid').innerHTML=matched.length?matched.map(x=>card(x.i,x.reasons)).join(''):'<div class="empty">Под такие параметры ничего не нашлось. Попробуйте снять часть фильтров.</div>';
+  grid.innerHTML=matched.length?matched.map(x=>card(x.i,x.reasons)).join(''):'<div class="empty">Под такие параметры ничего не нашлось. Попробуйте снять часть фильтров.</div>';
 }
 function reset(){
   ['f-type','f-stage','f-region'].forEach(id=>document.getElementById(id).value='any');
   document.getElementById('f-debut').checked=false;
   document.getElementById('f-query').value='';
   document.querySelectorAll('.cat-checks input').forEach(x=>x.checked=true);
-  render();
+  hideResults();
 }
 async function boot(){
   const files=Array.from({length:9},(_,i)=>`./data-${String(i).padStart(2,'0')}.json`);
   const parts=await Promise.all(files.map(async file=>{const r=await fetch(file,{cache:'no-store'});if(!r.ok)throw new Error(file);return r.json();}));
   ITEMS=parts.flatMap(p=>p.items||[]);
   initFilters();
-  document.querySelectorAll('.field select,.field input,.cat-checks input').forEach(el=>{el.addEventListener('input',render);el.addEventListener('change',render);});
+  document.querySelectorAll('.field select,.field input,.cat-checks input,#f-debut').forEach(el=>{
+    el.addEventListener('input',hideResults);
+    el.addEventListener('change',hideResults);
+  });
   document.getElementById('go-btn').addEventListener('click',render);
   document.getElementById('reset-btn').addEventListener('click',reset);
-  render();
+  hideResults();
 }
 document.addEventListener('DOMContentLoaded',boot);
 </script>
