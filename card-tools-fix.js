@@ -1,5 +1,6 @@
 (() => {
   const STORAGE_KEY = 'kino-finance-mvp-v1';
+  const KINOPRIME_REQUIREMENTS_URL = 'https://www.kinoprimefoundation.com/#rec98743691';
 
   function readFavoriteCount() {
     try {
@@ -52,22 +53,28 @@
     document.querySelectorAll('.card').forEach(card => {
       const detailed = card.querySelector('.application-requirements');
       if (!detailed) return;
-
       card.querySelectorAll('.row').forEach(row => {
-        const label = (row.querySelector('.k')?.textContent || '')
-          .replace(/\s+/g, ' ')
-          .trim()
-          .toLowerCase();
-        const value = (row.querySelector('.v')?.textContent || '')
-          .replace(/\s+/g, ' ')
-          .trim()
-          .toLowerCase();
-
+        const label = (row.querySelector('.k')?.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+        const value = (row.querySelector('.v')?.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
         const duplicateLabel = label === 'требования к подаче';
         const duplicateContent = value.includes('открыть требования к подаче') &&
           (value.includes('документы:') || value.includes('как подавать:') || value.includes('параметры для фильтра:'));
-
         if ((duplicateLabel || duplicateContent) && !row.contains(detailed)) row.remove();
+      });
+    });
+  }
+
+  function fixKinoprimeRequirementsLink() {
+    document.querySelectorAll('.card').forEach(card => {
+      const org = `${card.querySelector('.org')?.textContent || ''} ${card.querySelector('.prog')?.textContent || ''}`;
+      if (!/кинопрайм/i.test(org)) return;
+      card.querySelectorAll('.application-requirements a').forEach(anchor => {
+        const label = anchor.textContent.trim().toLowerCase();
+        if (label.includes('форма') || label.includes('требования') || /kinoprimefoundation\.com/i.test(anchor.href)) {
+          anchor.href = KINOPRIME_REQUIREMENTS_URL;
+          anchor.target = '_blank';
+          anchor.rel = 'noopener noreferrer';
+        }
       });
     });
   }
@@ -86,6 +93,7 @@
     setupNavigation();
     reorderPrimaryActions();
     removeDuplicateRequirements();
+    fixKinoprimeRequirementsLink();
     syncPdfLabel();
   }
 
