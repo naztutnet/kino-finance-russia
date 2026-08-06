@@ -1,0 +1,53 @@
+name: Install PDF v3 and Kinoprime link fixes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/install-v3-fixes.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Patch pages
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def patch(path, include_pdf):
+              p = Path(path)
+              s = p.read_text(encoding='utf-8')
+              lines = []
+              for line in s.splitlines():
+                  if 'pdf-export.js' in line or 'pdf-export-fix.js' in line or 'pdf-export-v3.js' in line or 'kinoprime-link-v3.js' in line:
+                      continue
+                  if 'requirements.js?' in line:
+                      line = '<script src="requirements.js?v=202608061315" defer></script>'
+                  lines.append(line)
+                  if 'requirements.js?v=202608061315' in line:
+                      lines.append('<script src="kinoprime-link-v3.js?v=202608061315" defer></script>')
+                      if include_pdf:
+                          lines.append('<script src="pdf-export-v3.js?v=202608061315" defer></script>')
+              p.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+
+          patch('index.html', True)
+          patch('istochniki.html', False)
+          PY
+
+      - name: Commit pages
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html istochniki.html
+          if ! git diff --cached --quiet; then
+            git commit -m 'fix: activate PDF v3 and correct Kinoprime link'
+            git push
+          fi
