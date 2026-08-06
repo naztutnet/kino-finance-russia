@@ -79,13 +79,35 @@
     });
   }
 
-  function syncPdfLabel() {
+  function installPdfDisabledStyle() {
+    if (document.getElementById('pdf-disabled-style')) return;
+    const style = document.createElement('style');
+    style.id = 'pdf-disabled-style';
+    style.textContent = `
+      [data-export-pdf][aria-disabled="true"]{
+        opacity:.5!important;
+        cursor:not-allowed!important;
+        filter:grayscale(1);
+      }
+      [data-export-pdf][aria-disabled="true"]:hover{
+        opacity:.62!important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function disablePdfExport() {
+    installPdfDisabledStyle();
     document.querySelectorAll('[data-export-pdf]').forEach(button => {
       button.textContent = 'Экспорт в PDF';
-      button.setAttribute('aria-label', 'Экспорт результатов в PDF');
+      button.setAttribute('aria-disabled', 'true');
+      button.setAttribute('aria-label', 'Экспорт в PDF — в разработке');
+      button.setAttribute('title', 'В разработке');
+      button.dataset.pdfDisabled = 'true';
+      button.tabIndex = 0;
     });
     document.querySelectorAll('.mvp-export-note').forEach(note => {
-      note.textContent = 'PDF скачивается напрямую';
+      note.textContent = 'В разработке';
     });
   }
 
@@ -94,40 +116,36 @@
     reorderPrimaryActions();
     removeDuplicateRequirements();
     fixKinoprimeRequirementsLink();
-    syncPdfLabel();
+    disablePdfExport();
   }
 
   function scheduleUiSync() {
-    [0, 40, 150, 400, 900, 1800].forEach(delay => setTimeout(syncUi, delay));
-  }
-
-  function loadPdfExporter() {
-    if (!document.querySelector('script[data-pdf-exporter]')) {
-      const script = document.createElement('script');
-      script.src = 'pdf-export.js?v=202608061248';
-      script.defer = true;
-      script.dataset.pdfExporter = 'true';
-      document.head.appendChild(script);
-    }
-    if (!document.querySelector('script[data-pdf-export-fix]')) {
-      const fix = document.createElement('script');
-      fix.src = 'pdf-export-fix.js?v=202608061305';
-      fix.defer = true;
-      fix.dataset.pdfExportFix = 'true';
-      document.head.appendChild(fix);
-    }
+    [0, 40, 150, 400, 900, 1800, 3500].forEach(delay => setTimeout(syncUi, delay));
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    loadPdfExporter();
     scheduleUiSync();
 
     document.addEventListener('click', event => {
+      const pdfButton = event.target.closest('[data-export-pdf]');
+      if (pdfButton) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        disablePdfExport();
+        return;
+      }
       if (event.target.closest('[data-mvp-favorite],[data-open-my],[data-favorites-nav]')) {
         setTimeout(syncFavoriteCount, 0);
       }
-      if (event.target.closest('#go-btn,#reset-btn,[data-export-pdf]')) scheduleUiSync();
-    });
+      if (event.target.closest('#go-btn,#reset-btn')) scheduleUiSync();
+    }, true);
+
+    document.addEventListener('keydown', event => {
+      if ((event.key === 'Enter' || event.key === ' ') && event.target.closest('[data-export-pdf]')) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    }, true);
 
     document.addEventListener('change', event => {
       if (event.target.matches('[data-mvp-status]')) setTimeout(syncFavoriteCount, 0);
