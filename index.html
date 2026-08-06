@@ -7,16 +7,14 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <header class="site">
   <div class="wrap">
     <div class="eyebrow">Справочник продюсера · Россия · 2026</div>
     <h1>Помощник в поиске финансирования вашего проекта</h1>
-    <p class="sub">Укажите параметры проекта — инструмент подберёт подходящие фонды, рибейты,
-    питчинги и гранты из базы источников и объяснит, почему они подходят. Все расчёты происходят
-    в браузере, ничего никуда не отправляется.</p>
+    <p class="sub">Укажите параметры проекта — инструмент подберёт подходящие фонды, рибейты, питчинги и гранты из базы источников.</p>
     <nav class="tabs">
       <a href="index.html" class="active">Помощник</a>
+      <a href="calendar.html">Календарь</a>
       <a href="istochniki.html">Все источники</a>
     </nav>
   </div>
@@ -25,7 +23,7 @@
 <div class="wrap">
   <div class="panel">
     <h2>Параметры проекта</h2>
-    <div class="grid-filters">
+    <div class="grid-filters grid-filters-3">
       <div class="field">
         <label for="f-type">Тип проекта</label>
         <select id="f-type">
@@ -46,27 +44,23 @@
         </select>
       </div>
       <div class="field">
-        <label for="f-region">Регион съёмок (для рибейтов)</label>
+        <label for="f-region">Регион съёмок</label>
         <select id="f-region">
           <option value="any">Не важно / без привязки</option>
         </select>
       </div>
-      <div class="field">
-        <label for="f-budget">Бюджет проекта, млн руб.</label>
-        <input type="number" id="f-budget" min="0" placeholder="например, 50">
-      </div>
     </div>
 
     <div class="grid-filters" style="margin-top:16px;">
-      <div class="field" style="grid-column: span 3;">
+      <div class="field" style="grid-column:span 3;">
         <label>Категории источников</label>
         <div class="cat-checks">
-        <label><input type="checkbox" value="gov" checked> Государственный</label>
-        <label><input type="checkbox" value="priv" checked> Частный</label>
-        <label><input type="checkbox" value="reg" checked> Региональный</label>
-        <label><input type="checkbox" value="pitch" checked> Питчинг / фестиваль</label>
-        <label><input type="checkbox" value="grant" checked> Грант / лаборатория / акселератор</label>
-        <label><input type="checkbox" value="intl" checked> Международный</label>
+          <label><input type="checkbox" value="gov" checked> Государственный</label>
+          <label><input type="checkbox" value="priv" checked> Частный</label>
+          <label><input type="checkbox" value="reg" checked> Региональный</label>
+          <label><input type="checkbox" value="pitch" checked> Питчинг / фестиваль</label>
+          <label><input type="checkbox" value="grant" checked> Грант / лаборатория / акселератор</label>
+          <label><input type="checkbox" value="intl" checked> Международный</label>
         </div>
       </div>
       <div class="field">
@@ -93,228 +87,87 @@
   <div class="results-grid" id="results-grid"></div>
 
   <footer class="site">
-    <strong>Как считается «Оценка поддержки»:</strong> если сумма в источнике — фиксированный лимит (например,
-    «до 800 млн»), он показывается как есть. Если это процент от бюджета (например, «до 50%»), оценка = ваш
-    бюджет × процент; если указаны и лимит, и процент — берётся меньшее из двух. Когда в источнике нет ни
-    суммы, ни применимого процента (общий пул на регион/год, стипendия автору, «уточнять», нефинансовая
-    поддержка) — оценка честно помечается как невычислимая, а не заменяется догадкой. Полная формула для
-    каждой карточки — под самой оценкой.<br><br>
-    Полный список всех источников без подбора под проект — на странице «Все источники».<br>
-    Данные соответствуют версии рабочей базы 0.4 от 2026-08-05. Условия конкурсов меняются —
-    перед подачей заявки сверяйтесь с официальным источником по ссылке в карточке.
+    Полный список источников доступен на странице «Все источники», а сроки подач и результатов — в разделе «Календарь». Данные соответствуют рабочей базе 0.4 от 2026-08-05. Перед подачей заявки сверяйтесь с официальным источником.
   </footer>
 </div>
 
 <script>
-let ITEMS = [];
-
-const TYPE_LABELS = {any:'Любой', feature:'Полнометражный игровой', series:'Сериал / видеоконтент', doc:'Документальный', animation:'Анимация', short:'Короткий метр'};
-const CAT_SEAL = {gov:'ГОС', priv:'ЧАСТ', reg:'РЕГ', pitch:'ПИТЧ', grant:'ГРАНТ', intl:'МЕЖД'};
-const BASIS_LABELS = {
-  prize:'приз / премия конкурса', stipend:'личная стипендия автору', pool_total:'общий пул региона/года, не лимит на проект',
-  non_monetary:'нефинансовая поддержка', pathway:'даёт преимущество в другом конкурсе', fund_unknown:'лимит на проект не раскрыт',
-  unclear:'сумма не указана в источнике',
-};
-
-function regionsList(){
-  const set = new Set();
-  ITEMS.forEach(i => { if (i.region) set.add(i.region); });
-  return Array.from(set).sort((a,b)=>a.localeCompare(b,'ru'));
-}
+let ITEMS=[];
+const CAT_SEAL={gov:'ГОС',priv:'ЧАСТ',reg:'РЕГ',pitch:'ПИТЧ',grant:'ГРАНТ',intl:'МЕЖД'};
+const BASIS_LABELS={prize:'приз / премия конкурса',stipend:'личная стипендия автору',pool_total:'общий пул региона/года',non_monetary:'нефинансовая поддержка',pathway:'преимущество в другом конкурсе',fund_unknown:'лимит на проект не раскрыт',unclear:'сумма не указана'};
 
 function initFilters(){
-  const regionSel = document.getElementById('f-region');
-  regionsList().forEach(r=>{
-    const opt = document.createElement('option'); opt.value = r; opt.textContent = r;
-    regionSel.appendChild(opt);
+  const sel=document.getElementById('f-region');
+  [...new Set(ITEMS.map(i=>i.region).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ru')).forEach(r=>{
+    const o=document.createElement('option');o.value=r;o.textContent=r;sel.appendChild(o);
   });
 }
-
-function getFilters(){
-  const cats = Array.from(document.querySelectorAll('.cat-checks input:checked')).map(x=>x.value);
-  return {
-    type: document.getElementById('f-type').value,
-    stage: document.getElementById('f-stage').value,
-    region: document.getElementById('f-region').value,
-    debut: document.getElementById('f-debut').checked,
-    budget: parseFloat(document.getElementById('f-budget').value) || null,
-    query: document.getElementById('f-query').value.trim().toLowerCase(),
-    cats: cats,
-  };
-}
-
-function passHardFilters(item, f){
-  if (!f.cats.includes(item.category)) return false;
-  if (f.stage !== 'any' && item.stage !== 'any' && item.stage !== f.stage) return false;
-  if (f.type !== 'any' && !item.types.includes('any') && !item.types.includes(f.type)) return false;
-  if (item.category === 'reg' && f.region !== 'any' && item.region !== f.region) return false;
-  if (f.query){
-    const hay = (item.title + ' ' + item.org + ' ' + item.program + ' ' + item.what_for).toLowerCase();
-    if (!hay.includes(f.query)) return false;
-  }
+function filters(){return{
+  type:document.getElementById('f-type').value,
+  stage:document.getElementById('f-stage').value,
+  region:document.getElementById('f-region').value,
+  debut:document.getElementById('f-debut').checked,
+  query:document.getElementById('f-query').value.trim().toLowerCase(),
+  cats:[...document.querySelectorAll('.cat-checks input:checked')].map(x=>x.value)
+};}
+function passes(i,f){
+  if(!f.cats.includes(i.category))return false;
+  if(f.stage!=='any'&&i.stage!=='any'&&i.stage!==f.stage)return false;
+  if(f.type!=='any'&&!i.types.includes('any')&&!i.types.includes(f.type))return false;
+  if(i.category==='reg'&&f.region!=='any'&&i.region!==f.region)return false;
+  if(f.query&&!(`${i.title} ${i.org} ${i.program} ${i.what_for}`.toLowerCase().includes(f.query)))return false;
   return true;
 }
-
-function round1(v){ return Math.round(v*10)/10; }
-
-function estimateSupport(item, budget){
-  const a = item.amount;
-  if (a.basis === 'pool_total') return {status:'pool_total', pool:a.pool_total};
-  if (a.basis === 'stipend') return {status:'stipend', value:a.max};
-  if (a.basis === 'non_monetary' || a.basis === 'pathway') return {status:'other'};
-  if (a.basis === 'fund_unknown') return {status:'unknown'};
-  if (a.currency === 'EUR') return {status:'other_currency'};
-
-  if (!a.known){
-    if (a.open_ended) return {status:'open_ended'};
-    return {status:'unknown'};
-  }
-  if (!budget){
-    if (a.max != null) return {status:'computed_flat', value:a.max};
-    if (a.pct != null) return {status:'needs_budget', pct:a.pct};
-    return {status:'unknown'};
-  }
-  const candidates = []; const parts = [];
-  if (a.max != null){ candidates.push(a.max); parts.push(`лимит ${a.max} млн`); }
-  if (a.pct != null){ const v = budget * a.pct/100; candidates.push(v); parts.push(`${a.pct}% × ${budget} млн = ${round1(v)} млн`); }
-  if (!candidates.length) return {status:'unknown'};
-  const value = round1(Math.min(...candidates));
-  return {status:'computed', value, formula: parts.join('; ') + (parts.length>1 ? ' — берётся меньшее' : '') };
+function score(i,f){
+  let n=0,reasons=[];
+  if(f.type!=='any'&&i.types.includes(f.type)){n+=3;reasons.push('тип проекта совпадает');}
+  if(f.stage!=='any'&&i.stage===f.stage)n+=2;
+  if(i.category==='reg'&&f.region!=='any'&&i.region===f.region){n+=4;reasons.push('регион совпадает');}
+  if(f.debut&&i.debut){n+=3;reasons.push('подходит дебютантам');}
+  if(i.status&&/открыт/i.test(i.status)){n+=1;reasons.push('приём открыт');}
+  return{n,reasons};
 }
-
-function estimateLine(item, budget){
-  const e = estimateSupport(item, budget);
-  switch(e.status){
-    case 'computed': return {text:`≈ ${e.value} млн руб.`, sub:e.formula, sortKey:e.value};
-    case 'computed_flat': return {text:`≈ ${e.value} млн руб.`, sub:'фиксированный максимум источника', sortKey:e.value};
-    case 'needs_budget': return {text:`до ${e.pct}% бюджета`, sub:'введите бюджет проекта, чтобы увидеть сумму в рублях', sortKey:-1};
-    case 'pool_total': return {text:`пул ${e.pool} млн на регион/год`, sub:'не лимит на один проект', sortKey:-2};
-    case 'stipend': return {text:`${e.value} млн руб. за год`, sub:'стипендия автору лично, не бюджет фильма', sortKey:-2};
-    case 'open_ended': return {text:'верхняя граница не ограничена', sub:'см. коридоры сумм в поле «Финансирование»', sortKey:-1};
-    case 'other_currency': return {text:'сумма в евро', sub:'не сравнивается автоматически с бюджетом в рублях', sortKey:-2};
-    case 'other': return {text:'нефинансовая / отложенная поддержка', sub:'', sortKey:-3};
-    default: return {text:'сумма не указана в источнике', sub:'уточняйте по ссылке', sortKey:-3};
-  }
+function linkify(v){return v&&/^https?:\/\//i.test(v)?`<a href="${v}" target="_blank" rel="noopener">Официальный источник</a>`:v||'';}
+function card(i,reasons){
+  const rows=[];
+  const add=(k,v)=>{if(v)rows.push(`<div class="row"><div class="k">${k}</div><div class="v">${v}</div></div>`);};
+  add('Для чего',i.what_for);
+  add('Финансирование',[i.max_amount_text,i.coverage_pct,i.returnable].filter(Boolean).join(' · '));
+  add('Регион',i.region);
+  add('Сроки',[i.deadline_text&&`приём: ${i.deadline_text}`,i.defense_date&&`защита: ${i.defense_date}`,i.results_date&&`результаты: ${i.results_date}`].filter(Boolean).join(' · '));
+  add('Статус',[i.results_summary,i.status].filter(Boolean).join(' · '));
+  if(i.amount&&i.amount.note)add('Пояснение',i.amount.note);
+  add('Контакты',i.contacts);
+  add('Ссылка',linkify(i.link));
+  add('Заметка',i.note);
+  const basis=i.amount&&BASIS_LABELS[i.amount.basis]?`<span class="chip chip-basis">${BASIS_LABELS[i.amount.basis]}</span>`:'';
+  const chips=reasons.map(r=>`<span class="chip">${r}</span>`).join('')+basis;
+  return `<article class="card" style="--accent:var(--${i.category})"><div class="cat-bar"><div class="org">${i.org}</div>${i.program?`<div class="prog">${i.program}</div>`:''}<div class="seal">${CAT_SEAL[i.category]}</div></div>${chips?`<div class="reasons">${chips}</div>`:''}<div class="rows">${rows.join('')}</div></article>`;
 }
-
-function scoreItem(item, f){
-  let score = 0; const reasons = [];
-  if (f.type !== 'any' && item.types.includes(f.type)) { score += 3; reasons.push('тип проекта совпадает'); }
-  if (f.stage !== 'any' && item.stage === f.stage) { score += 2; }
-  if (item.category === 'reg' && f.region !== 'any' && item.region === f.region) { score += 4; reasons.push('регион совпадает'); }
-  if (f.debut && item.debut) { score += 3; reasons.push('дружелюбно к дебютантам'); }
-  if (item.status && /открыт/i.test(item.status)) { score += 1; reasons.push('приём открыт сейчас'); }
-  return {score, reasons};
-}
-
-function fmt(v){ return (v===undefined || v===null || v==='') ? null : v; }
-
-function linkify(v){
-  if (!v) return null;
-  if (/^https?:\/\//i.test(v)) return `<a href="${v}" target="_blank" rel="noopener">${v}</a>`;
-  return v;
-}
-
-function renderCard(item, reasons, budget){
-  const color = `var(--${item.category})`;
-  const rows = [];
-  const push = (k,v) => { v = fmt(v); if (v) rows.push(`<div class="row"><div class="k">${k}</div><div class="v">${v}</div></div>`); };
-
-  push('Для чего', item.what_for);
-  const finParts = [item.max_amount_text, item.coverage_pct ? ('покрытие ' + item.coverage_pct) : '', item.returnable].filter(Boolean);
-  push('Финансирование (как в источнике)', finParts.join(' · '));
-
-  const est = estimateLine(item, budget);
-  const estRow = `<div class="row est-row"><div class="k">Оценка поддержки</div><div class="v"><span class="est-value">${est.text}</span>${est.sub ? `<div class="est-sub">${est.sub}</div>` : ''}</div></div>`;
-
-  if (item.region) push('Регион', item.region);
-  const sroki = [item.deadline_text ? ('приём: ' + item.deadline_text) : '', item.defense_date ? ('защита: ' + item.defense_date) : '', item.results_date ? ('результаты: ' + item.results_date) : ''].filter(Boolean).join(' · ');
-  push('Сроки', sroki);
-  push('Итоги / статус', [item.results_summary, item.status].filter(Boolean).join(' · '));
-  if (item.amount.avg_award) push('Средний размер в прошлом отборе', `≈ ${item.amount.avg_award} млн руб. (по ${item.amount.avg_count} проектам)`);
-  if (item.amount.note) push('Пояснение к сумме', item.amount.note);
-  push('Контакты', item.contacts);
-  push('Ссылка', linkify(item.link));
-  push('Заметка', item.note);
-
-  const basisChip = BASIS_LABELS[item.amount.basis] ? `<span class="chip chip-basis">${BASIS_LABELS[item.amount.basis]}</span>` : '';
-  const chips = reasons.map(r=>`<span class="chip">${r}</span>`).join('') + basisChip;
-
-  return `
-  <div class="card category-${item.category}" style="--accent:${color}">
-    <div class="cat-bar">
-      <div class="org">${item.org}</div>
-      ${item.program ? `<div class="prog">${item.program}</div>` : ''}
-      <div class="seal">${CAT_SEAL[item.category]}</div>
-    </div>
-    ${chips ? `<div class="reasons">${chips}</div>` : ''}
-    <div class="rows">${[rows[0], estRow, ...rows.slice(1)].join('')}</div>
-  </div>`;
-}
-
 function render(){
-  const f = getFilters();
-  let matched = ITEMS.filter(i => passHardFilters(i, f)).map(i => {
-    const {score, reasons} = scoreItem(i, f);
-    const est = estimateLine(i, f.budget);
-    return {item:i, score, reasons, sortKey: est.sortKey};
-  });
-  if (f.budget){
-    matched.sort((a,b)=> b.sortKey - a.sortKey || b.score - a.score || a.item.title.localeCompare(b.item.title,'ru'));
-  } else {
-    matched.sort((a,b)=> b.score - a.score || a.item.title.localeCompare(b.item.title,'ru'));
-  }
-
-  const grid = document.getElementById('results-grid');
-  const count = document.getElementById('results-count');
-  count.textContent = `Найдено: ${matched.length}`;
-
-  if (matched.length === 0){
-    grid.innerHTML = '<div class="empty">Под такие параметры ничего не нашлось. Попробуйте снять часть фильтров — категории или регион.</div>';
-    return;
-  }
-
-  let html = '';
-  let dividerShown = false;
-  matched.forEach(m => {
-    if (f.budget && !dividerShown && m.sortKey < 0){
-      html += `<div class="divider">Ниже — источники без вычисляемой суммы (нефинансовые, общий пул, стипендии, «уточнять»). Они не хуже, просто сумму для них нельзя честно посчитать.</div>`;
-      dividerShown = true;
-    }
-    html += renderCard(m.item, m.reasons, f.budget);
-  });
-  grid.innerHTML = html;
+  const f=filters();
+  const matched=ITEMS.filter(i=>passes(i,f)).map(i=>({i,...score(i,f)})).sort((a,b)=>b.n-a.n||a.i.title.localeCompare(b.i.title,'ru'));
+  document.getElementById('results-count').textContent=`Найдено: ${matched.length}`;
+  document.getElementById('results-grid').innerHTML=matched.length?matched.map(x=>card(x.i,x.reasons)).join(''):'<div class="empty">Под такие параметры ничего не нашлось. Попробуйте снять часть фильтров.</div>';
 }
-
-function resetFilters(){
-  document.getElementById('f-type').value = 'any';
-  document.getElementById('f-stage').value = 'any';
-  document.getElementById('f-region').value = 'any';
-  document.getElementById('f-debut').checked = false;
-  document.getElementById('f-budget').value = '';
-  document.getElementById('f-query').value = '';
-  document.querySelectorAll('.cat-checks input').forEach(x=>x.checked = true);
+function reset(){
+  ['f-type','f-stage','f-region'].forEach(id=>document.getElementById(id).value='any');
+  document.getElementById('f-debut').checked=false;
+  document.getElementById('f-query').value='';
+  document.querySelectorAll('.cat-checks input').forEach(x=>x.checked=true);
   render();
 }
-
 async function boot(){
-  const files = Array.from({length: 9}, (_, i) => `./data-${String(i).padStart(2,'0')}.json`);
-  const parts = await Promise.all(files.map(async file => {
-    const res = await fetch(file, {cache:'no-store'});
-    if (!res.ok) throw new Error(`Не удалось загрузить ${file}`);
-    return res.json();
-  }));
-  ITEMS = parts.flatMap(part => part.items || []);
+  const files=Array.from({length:9},(_,i)=>`./data-${String(i).padStart(2,'0')}.json`);
+  const parts=await Promise.all(files.map(async file=>{const r=await fetch(file,{cache:'no-store'});if(!r.ok)throw new Error(file);return r.json();}));
+  ITEMS=parts.flatMap(p=>p.items||[]);
   initFilters();
-  document.querySelectorAll('.field select, .field input, .cat-checks input').forEach(el=>{
-    el.addEventListener('input', render);
-    el.addEventListener('change', render);
-  });
-  document.getElementById('reset-btn').addEventListener('click', resetFilters);
-  document.getElementById('go-btn').addEventListener('click', render);
+  document.querySelectorAll('.field select,.field input,.cat-checks input').forEach(el=>{el.addEventListener('input',render);el.addEventListener('change',render);});
+  document.getElementById('go-btn').addEventListener('click',render);
+  document.getElementById('reset-btn').addEventListener('click',reset);
   render();
 }
-document.addEventListener('DOMContentLoaded', boot);
+document.addEventListener('DOMContentLoaded',boot);
 </script>
 </body>
 </html>
