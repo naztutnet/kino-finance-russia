@@ -1,0 +1,17 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//naztutnet//Kino Finance Russia//RU
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Финансирование кино РФ — дедлайны
+X-WR-TIMEZONE:Europe/Moscow
+BEGIN:VEVENT
+UID:pfci-2027-first-deadline@kino-finance-russia
+DTSTAMP:20260805T231500Z
+DTSTART;VALUE=DATE:20260630
+DTEND;VALUE=DATE:20260701
+SUMMARY:Президентский фонд культурных инициатив — окончание подачи на первый конкурс 2027 года
+DESCRIPTION:Окончание приёма заявок — 30 июня 2026 года в 23:30 по московскому времени.
+URL:https://фондкультурныхинициатив.рф/
+END:VEVENT
+END:VCALENDAR
