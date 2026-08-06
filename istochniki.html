@@ -1,146 +1,177 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Источники финансирования кино в России</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Все источники финансирования — Справочник продюсера</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="site-header">
-    <a class="brand" href="index.html">КИНО / ФИНАНСИРОВАНИЕ</a>
-    <nav aria-label="Основная навигация">
-      <a href="index.html">Главная</a>
-      <a class="active" href="istochniki.html">Источники</a>
-      <a href="calendar.html">Календарь</a>
+
+<header class="site">
+  <div class="wrap">
+    <div class="eyebrow">Справочник продюсера · Россия · 2026</div>
+    <h1>Все источники финансирования</h1>
+    <p class="sub">Полный каталог: государственные фонды, частные фонды, региональные рибейты, питчинги,
+    фестивали с призами, акселераторы и международные программы — всё в одном месте, без подбора под проект.</p>
+    <nav class="tabs">
+      <a href="index.html">Помощник</a>
+      <a href="istochniki.html" class="active">Все источники</a>
     </nav>
-  </header>
+  </div>
+</header>
 
-  <main>
-    <section class="page-head">
-      <p class="eyebrow">ФЕДЕРАЛЬНЫЕ · РЕГИОНАЛЬНЫЕ · ЧАСТНЫЕ</p>
-      <h1>Источники<br>финансирования</h1>
-      <p>Каталог программ поддержки кинопроизводства и аудиовизуального контента. Приоритет — официальные страницы организаторов и опубликованные документы.</p>
-    </section>
-
-    <div class="toolbar">
-      <button class="control filter-button active" data-type="all">Все</button>
-      <button class="control filter-button" data-type="Федеральный">Федеральные</button>
-      <button class="control filter-button" data-type="Региональный">Региональные</button>
-      <button class="control filter-button" data-type="Частный">Частные</button>
-      <input id="sourceSearch" class="control" type="search" placeholder="Поиск по названию или виду поддержки">
+<div class="wrap">
+  <div class="panel">
+    <h2>Поиск и фильтр по категориям</h2>
+    <div class="grid-filters">
+      <div class="field" style="grid-column: span 3;">
+        <label>Категории источников</label>
+        <div class="cat-checks">
+        <label><input type="checkbox" value="gov" checked> Государственный</label>
+        <label><input type="checkbox" value="priv" checked> Частный</label>
+        <label><input type="checkbox" value="reg" checked> Региональный</label>
+        <label><input type="checkbox" value="pitch" checked> Питчинг / фестиваль</label>
+        <label><input type="checkbox" value="grant" checked> Грант / лаборатория / акселератор</label>
+        <label><input type="checkbox" value="intl" checked> Международный</label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-query">Поиск по названию</label>
+        <input type="text" id="f-query" placeholder="например, Фонд кино">
+      </div>
     </div>
+    <div class="actions">
+      <button class="ghost" id="reset-btn">Сбросить фильтры</button>
+    </div>
+  </div>
 
-    <section id="sourceList" class="list" aria-live="polite">
-      <div class="empty">Загрузка каталога…</div>
-    </section>
+  <div class="results-head">
+    <h2>Каталог</h2>
+    <div class="count" id="results-count">—</div>
+  </div>
 
-    <section class="notice">
-      <strong>Проверка перед подачей:</strong> откройте положение конкурса, убедитесь в допустимом типе заявителя, доле собственного финансирования, сроках производства и составе обязательных документов.
-    </section>
-  </main>
+  <div class="quicknav" id="quicknav"></div>
 
-  <footer>
-    <span>Каталог источников финансирования кино</span>
-    <span id="sourceCount">Источников: —</span>
+  <div id="catalog-root"></div>
+
+  <footer class="site">
+    <strong>Как искать проект под себя:</strong> для подбора источников именно под ваш проект (тип, стадия,
+    регион, бюджет, дебют) удобнее страница «Помощник» — здесь же полный список для свободного просмотра.<br><br>
+    Данные соответствуют версии рабочей базы 0.4 от 2026-08-05. Условия конкурсов меняются —
+    перед подачей заявки сверяйтесь с официальным источником по ссылке в карточке.
   </footer>
+</div>
 
 <script>
-const fallbackSources = [
-  {
-    name:'Фонд кино', type:'Федеральный', territory:'Россия',
-    support:'Поддержка производства, проката и продвижения национальных фильмов; отдельные отборы и программы.',
-    url:'https://fond-kino.ru/', tags:['кино','производство','прокат']
-  },
-  {
-    name:'Министерство культуры Российской Федерации', type:'Федеральный', territory:'Россия',
-    support:'Государственная поддержка кинематографии по направлениям и условиям, установленным конкурсной документацией.',
-    url:'https://culture.gov.ru/', tags:['субсидии','кинематография']
-  },
-  {
-    name:'Институт развития интернета', type:'Федеральный', territory:'Россия',
-    support:'Конкурсы интернет-контента, аудиовизуальных проектов, регионального и национального контента.',
-    url:'https://xn--h1aax.xn--p1ai/', tags:['сериалы','онлайн-контент','интернет']
-  },
-  {
-    name:'Президентский фонд культурных инициатив', type:'Федеральный', territory:'Россия',
-    support:'Грантовая поддержка проектов в сфере культуры, креативных индустрий и общественно значимого контента.',
-    url:'https://фондкультурныхинициатив.рф/', tags:['грант','культура','креативные индустрии']
-  },
-  {
-    name:'Кинопрайм', type:'Частный', territory:'Россия',
-    support:'Частное финансирование и инвестиционное участие в кинопроектах по внутренним критериям фонда.',
-    url:'https://kinoprime.ru/', tags:['частный фонд','инвестиции']
-  },
-  {
-    name:'Региональные кинокомиссии и органы культуры', type:'Региональный', territory:'Регионы РФ',
-    support:'Рибейты, субсидии и организационная поддержка. Условия и периоды приёма различаются по субъектам РФ.',
-    url:'calendar.html', tags:['рибейт','региональная поддержка']
-  }
-];
+let ITEMS = [];
+let BLOCKS = [];
+const CAT_SEAL = {gov:'ГОС', priv:'ЧАСТ', reg:'РЕГ', pitch:'ПИТЧ', grant:'ГРАНТ', intl:'МЕЖД'};
+const BASIS_LABELS = {
+  prize:'приз / премия конкурса', stipend:'личная стипендия автору', pool_total:'общий пул региона/года, не лимит на проект',
+  non_monetary:'нефинансовая поддержка', pathway:'даёт преимущество в другом конкурсе', fund_unknown:'лимит на проект не раскрыт',
+  unclear:'сумма не указана в источнике',
+};
 
-let sources = [];
-let selectedType = 'all';
-const list = document.getElementById('sourceList');
-const search = document.getElementById('sourceSearch');
+function fmt(v){ return (v===undefined || v===null || v==='') ? null : v; }
+function linkify(v){
+  if (!v) return null;
+  if (/^https?:\/\//i.test(v)) return `<a href="${v}" target="_blank" rel="noopener">${v}</a>`;
+  return v;
+}
 
-function esc(value='') {
-  return String(value).replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+function renderCard(item){
+  const color = `var(--${item.category})`;
+  const rows = [];
+  const push = (k,v) => { v = fmt(v); if (v) rows.push(`<div class="row"><div class="k">${k}</div><div class="v">${v}</div></div>`); };
+  push('Для чего', item.what_for);
+  const finParts = [item.max_amount_text, item.coverage_pct ? ('покрытие ' + item.coverage_pct) : '', item.returnable].filter(Boolean);
+  push('Финансирование', finParts.join(' · '));
+  if (item.region) push('Регион', item.region);
+  const sroki = [item.deadline_text ? ('приём: ' + item.deadline_text) : '', item.defense_date ? ('защита: ' + item.defense_date) : '', item.results_date ? ('результаты: ' + item.results_date) : ''].filter(Boolean).join(' · ');
+  push('Сроки', sroki);
+  push('Итоги / статус', [item.results_summary, item.status].filter(Boolean).join(' · '));
+  if (item.amount.avg_award) push('Средний размер в прошлом отборе', `≈ ${item.amount.avg_award} млн руб. (по ${item.amount.avg_count} проектам)`);
+  if (item.amount.note) push('Пояснение к сумме', item.amount.note);
+  push('Контакты', item.contacts);
+  push('Ссылка', linkify(item.link));
+  push('Заметка', item.note);
+  const basisChip = BASIS_LABELS[item.amount.basis] ? `<div class="reasons"><span class="chip chip-basis">${BASIS_LABELS[item.amount.basis]}</span></div>` : '';
+  return `
+  <div class="card category-${item.category}" style="--accent:${color}" data-search="${(item.title+' '+item.org+' '+item.program+' '+item.what_for).toLowerCase().replace(/"/g,'')}">
+    <div class="cat-bar">
+      <div class="org">${item.org}</div>
+      ${item.program ? `<div class="prog">${item.program}</div>` : ''}
+      <div class="seal">${CAT_SEAL[item.category]}</div>
+    </div>
+    ${basisChip}
+    <div class="rows">${rows.join('')}</div>
+  </div>`;
 }
-function normalize(raw) {
-  if (Array.isArray(raw)) return raw;
-  if (raw && Array.isArray(raw.sources)) return raw.sources;
-  if (raw && Array.isArray(raw.istochniki)) return raw.istochniki;
-  return [];
-}
-function render() {
-  const q = search.value.trim().toLowerCase();
-  const filtered = sources.filter(item => {
-    const type = item.type || item.level || item.category || '';
-    const hay = `${item.name||item.title||''} ${item.support||item.description||''} ${item.territory||item.region||''} ${(item.tags||[]).join(' ')}`.toLowerCase();
-    return (selectedType === 'all' || type === selectedType) && (!q || hay.includes(q));
+
+function renderAll(){
+  const root = document.getElementById('catalog-root');
+  const quicknav = document.getElementById('quicknav');
+  let navHtml = '';
+  let bodyHtml = '';
+  BLOCKS.forEach(b => {
+    const its = ITEMS.filter(i => i.block === b.num);
+    navHtml += `<a href="#block-${b.num}">${b.num}. ${b.title} (${its.length})</a>`;
+    bodyHtml += `
+    <div class="block-heading" id="block-${b.num}">
+      <div class="num">${String(b.num).padStart(2,'0')}</div>
+      <h2>${b.title}</h2>
+    </div>
+    <div class="block-count">${its.length} источник(ов)</div>
+    <div class="results-grid" data-block="${b.num}">
+      ${its.map(renderCard).join('')}
+    </div>`;
   });
-  document.getElementById('sourceCount').textContent = `Источников: ${sources.length}`;
-  if (!filtered.length) {
-    list.innerHTML = '<div class="empty">По выбранным параметрам источников нет.</div>';
-    return;
-  }
-  list.innerHTML = filtered.map(item => {
-    const name = item.name || item.title || '';
-    const type = item.type || item.level || item.category || '';
-    const territory = item.territory || item.region || '';
-    const support = item.support || item.description || '';
-    const url = item.url || item.source_url || item.official_url || '#';
-    const tags = Array.isArray(item.tags) ? item.tags : [];
-    return `<article class="source-card" data-type="${esc(type)}">
-      <div><h3>${esc(name)}</h3><div class="meta"><span class="tag">${esc(type)}</span>${territory?`<span class="tag">${esc(territory)}</span>`:''}</div></div>
-      <div><p>${esc(support)}</p><div class="meta">${tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></div>
-      <a class="external" href="${esc(url)}" target="_blank" rel="noopener">Официальный сайт ↗</a>
-    </article>`;
-  }).join('');
+  quicknav.innerHTML = navHtml;
+  root.innerHTML = bodyHtml;
 }
 
-async function load() {
-  for (const file of ['sources.json','data.json']) {
-    try {
-      const response = await fetch(file, {cache:'no-store'});
-      if (!response.ok) continue;
-      const data = normalize(await response.json());
-      if (data.length) { sources = data; break; }
-    } catch (e) {}
-  }
-  if (!sources.length) sources = fallbackSources;
-  render();
+function applySearch(){
+  const q = document.getElementById('f-query').value.trim().toLowerCase();
+  const cats = Array.from(document.querySelectorAll('.cat-checks input:checked')).map(x=>x.value);
+  let visibleCount = 0;
+  document.querySelectorAll('.card').forEach(card => {
+    const hay = card.getAttribute('data-search');
+    const cat = card.querySelector('.seal').textContent;
+    const catKey = Object.keys(CAT_SEAL).find(k => CAT_SEAL[k] === cat);
+    const okQuery = !q || hay.includes(q);
+    const okCat = cats.includes(catKey);
+    const show = okQuery && okCat;
+    card.style.display = show ? '' : 'none';
+    if (show) visibleCount++;
+  });
+  document.querySelectorAll('[data-block]').forEach(grid => {
+    const anyVisible = Array.from(grid.querySelectorAll('.card')).some(c => c.style.display !== 'none');
+    grid.previousElementSibling.style.display = anyVisible ? '' : 'none';
+    grid.previousElementSibling.previousElementSibling.style.display = anyVisible ? '' : 'none';
+    grid.style.display = anyVisible ? '' : 'none';
+  });
+  document.getElementById('results-count').textContent = `Показано: ${visibleCount} из ${ITEMS.length}`;
 }
 
-document.querySelectorAll('[data-type]').forEach(btn => btn.addEventListener('click', () => {
-  document.querySelectorAll('[data-type]').forEach(x => x.classList.remove('active'));
-  btn.classList.add('active');
-  selectedType = btn.dataset.type;
-  render();
-}));
-search.addEventListener('input', render);
-load();
+async function boot(){
+  const res = await fetch('./data.json');
+  const data = await res.json();
+  ITEMS = data.items;
+  const seen = new Map();
+  ITEMS.forEach(i => { if (!seen.has(i.block)) seen.set(i.block, i.block_title); });
+  BLOCKS = Array.from(seen.entries()).map(([num,title])=>({num,title})).sort((a,b)=>a.num-b.num);
+  renderAll();
+  document.getElementById('results-count').textContent = `Показано: ${ITEMS.length} из ${ITEMS.length}`;
+  document.getElementById('f-query').addEventListener('input', applySearch);
+  document.querySelectorAll('.cat-checks input').forEach(el => el.addEventListener('change', applySearch));
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    document.getElementById('f-query').value = '';
+    document.querySelectorAll('.cat-checks input').forEach(x=>x.checked = true);
+    applySearch();
+  });
+}
+document.addEventListener('DOMContentLoaded', boot);
 </script>
 </body>
 </html>
