@@ -102,12 +102,20 @@
   }
 
   function loadPdfExporter() {
-    if (document.querySelector('script[data-pdf-exporter]')) return;
-    const script = document.createElement('script');
-    script.src = 'pdf-export.js?v=202608061248';
-    script.defer = true;
-    script.dataset.pdfExporter = 'true';
-    document.head.appendChild(script);
+    if (!document.querySelector('script[data-pdf-exporter]')) {
+      const script = document.createElement('script');
+      script.src = 'pdf-export.js?v=202608061248';
+      script.defer = true;
+      script.dataset.pdfExporter = 'true';
+      document.head.appendChild(script);
+    }
+    if (!document.querySelector('script[data-pdf-export-fix]')) {
+      const fix = document.createElement('script');
+      fix.src = 'pdf-export-fix.js?v=202608061305';
+      fix.defer = true;
+      fix.dataset.pdfExportFix = 'true';
+      document.head.appendChild(fix);
+    }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
