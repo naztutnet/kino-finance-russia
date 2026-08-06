@@ -50,7 +50,3 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          # Публикация Pages иногда подолгу стоит в очереди на стороне GitHub;
-          # стандартных 10 минут не хватает и деплой отменяется по таймауту.
-          timeout: 1800000
