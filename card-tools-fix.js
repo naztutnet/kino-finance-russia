@@ -96,7 +96,7 @@
   function loadPdfExporter() {
     if (document.querySelector('script[data-pdf-exporter]')) return;
     const script = document.createElement('script');
-    script.src = 'pdf-export.js?v=202608061239';
+    script.src = 'pdf-export.js?v=202608061248';
     script.defer = true;
     script.dataset.pdfExporter = 'true';
     document.head.appendChild(script);
