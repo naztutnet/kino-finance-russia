@@ -26,6 +26,20 @@
   },
   {
     "year": 2026,
+    "date": "19.06.2026",
+    "date_iso": "2026-06-19",
+    "kind": "Результаты",
+    "status": "published",
+    "statusText": "Результаты опубликованы",
+    "organizer": "Фонд кино",
+    "title": "Поддержка производства национальных фильмов лидеров отечественного кинопроизводства",
+    "note": "Фонд кино опубликовал перечень 23 национальных фильмов, утверждённых к получению поддержки.",
+    "results": "https://www.fond-kino.ru/news/fondom-kino-zaversena-procedura-otbora-v-celah-okazania-podderzki-proizvodstva-nacionalnyh-filmov-liderov-otecestvennogo-kinoproizvodstva-062026/",
+    "results_verified": true,
+    "source": "https://www.fond-kino.ru/projects/otbor-hudozestvennyh-nacionalnyh-filmov-v-celah-okazania-podderzki-proizvodstva-za-scet-sredstv-istocnikom-kotoryh-avlautsa-subsidii-podderzka-na-bezvozvratnoj-osnove-v-2026-godu/"
+  },
+  {
+    "year": 2026,
     "date": "Дата ожидается",
     "kind": "Подача",
     "status": "wait",
@@ -47,5 +61,19 @@
     "note": "События разделяются по конкурсам после публикации официальных карточек. Прямая ссылка на победителей добавляется отдельно для каждого завершённого отбора.",
     "apply": "https://xn--h1aax.xn--p1ai/",
     "source": "https://xn--h1aax.xn--p1ai/"
+  },
+  {
+    "year": 2026,
+    "date": "01.07.2026",
+    "date_iso": "2026-07-01",
+    "kind": "Результаты",
+    "status": "published",
+    "statusText": "Результаты опубликованы",
+    "organizer": "Институт развития интернета",
+    "title": "Конкурс на создание национального контента 2026",
+    "note": "ИРИ объявил 152 проекта-победителя. На официальной странице конкурса также опубликован отдельный файл со списком победителей.",
+    "results": "https://xn--h1aax.xn--p1ai/news/itogi-konkursa-na-sozdanie-natsionalnogo-kontenta-2026/",
+    "results_verified": true,
+    "source": "https://xn--h1aax.xn--p1ai/contests/konkurs-natsionalnogo-kontenta-2026/"
   }
 ]
