@@ -11,7 +11,8 @@
 <link rel="stylesheet" href="horizontal.css?v=2026081101">
 <link rel="stylesheet" href="mvp.css?v=2026081101">
 <link rel="stylesheet" href="editorial.css?v=2026081111">
-<script src="enhancements.js?v=2026081111" defer></script>
+<link rel="stylesheet" href="approved-home.css?v=2026081113">
+<script src="enhancements.js?v=2026081112" defer></script>
 <script src="mvp.js?v=2026081101" defer></script>
 <script src="requirements.js?v=2026081101" defer></script>
 <script src="pdf-export.js?v=2026081101" defer></script>
@@ -27,7 +28,7 @@
       <a href="index.html" class="active"><span><b>01</b> / ПОДБОР</span><small>найти подходящее</small></a>
       <a href="istochniki.html"><span><b>02</b> / ИСТОЧНИКИ</span><small>весь каталог</small></a>
       <a href="calendar.html"><span><b>03</b> / ДЕДЛАЙНЫ</span><small>календарь приёмов</small></a>
-      <a href="#my-submissions" id="ed-my-nav"><span><b>04</b> / МОИ ПОДАЧИ</span><small>мои проекты</small></a>
+      <a href="my-submissions.html"><span><b>04</b> / МОИ ПОДАЧИ</span><small>мои проекты</small></a>
     </nav>
   </div>
 </header>
@@ -124,7 +125,7 @@
   <section class="ed-utility" id="my-submissions" aria-label="Инструменты">
     <a class="ed-util" href="calendar.html"><strong>02 /</strong><b>Дедлайны</b><p>Календарь приёмов, защит и публикации результатов.</p></a>
     <a class="ed-util" href="#" data-open-compare-shortcut><strong>03 /</strong><b>Сравнение</b><p>Сравните до четырёх программ одновременно.</p></a>
-    <a class="ed-util" href="#" data-open-my-shortcut><strong>04 /</strong><b>Мои подачи</b><p>Отслеживайте статус программ, которые выбрали для работы.</p></a>
+    <a class="ed-util" href="my-submissions.html"><strong>04 /</strong><b>Мои подачи</b><p>Отслеживайте статус программ, которые выбрали для работы.</p></a>
     <a class="ed-util" href="#filters"><strong>→</strong><b>Экспорт данных</b><p>PDF, CSV и персональные календари доступны после подбора.</p></a>
   </section>
 
@@ -199,7 +200,8 @@ function render(){
   const head=document.getElementById('results-head');const grid=document.getElementById('results-grid');
   head.hidden=false;grid.hidden=false;document.getElementById('results-count').textContent=`Найдено: ${matched.length}`;
   grid.innerHTML=matched.length?matched.map(x=>card(x.i,x.reasons)).join(''):'<div class="empty">Под такие параметры ничего не нашлось. Попробуйте снять часть фильтров.</div>';
-  head.scrollIntoView({behavior:'smooth',block:'start'});
+  const top=head.getBoundingClientRect().top+window.scrollY-96;
+  window.scrollTo({top:Math.max(0,top),left:0,behavior:'smooth'});
 }
 function reset(){
   ['f-type','f-stage','f-region'].forEach(id=>document.getElementById(id).value='any');
@@ -287,8 +289,6 @@ function renderEditorialOverview(){
 function bindEditorialShortcuts(){
   const clickInjected=(selector)=>{const node=document.querySelector(selector);if(node)node.click();};
   document.querySelector('[data-open-compare-shortcut]')?.addEventListener('click',e=>{e.preventDefault();clickInjected('[data-open-compare-modal]');});
-  document.querySelector('[data-open-my-shortcut]')?.addEventListener('click',e=>{e.preventDefault();clickInjected('[data-open-my]');});
-  document.getElementById('ed-my-nav')?.addEventListener('click',e=>{e.preventDefault();clickInjected('[data-open-my]');});
 }
 async function boot(){
   const files=Array.from({length:10},(_,i)=>`./data-${String(i).padStart(2,'0')}.json`);
