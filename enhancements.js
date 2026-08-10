@@ -5,8 +5,25 @@
   const allItems = [];
   const STORAGE_KEY = 'kino-finance-mvp-v1';
 
+  if (location.hash === '#my-submissions') location.replace('my-submissions.html');
+  document.addEventListener('click', event => {
+    const node = event.target.closest?.('[data-open-favorites],[data-open-favorites-shortcut],[data-target-favorites]');
+    if (node) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      location.href = 'favorites.html';
+      return;
+    }
+    const mine = event.target.closest?.('[data-open-my],[data-open-my-shortcut],#ed-my-nav');
+    if (mine) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      location.href = 'my-submissions.html';
+    }
+  }, true);
+
   function ensureStyles() {
-    for (const href of ['product.css?v=2026081106', 'product-home.css?v=2026081106', 'white-theme.css?v=2026081107', 'approved-home.css?v=2026081108']) {
+    for (const href of ['product.css?v=2026081106', 'product-home.css?v=2026081106', 'white-theme.css?v=2026081107', 'approved-home.css?v=2026081109']) {
       if ([...document.styleSheets].some(s => s.href?.includes(href.split('?')[0]))) continue;
       const link = document.createElement('link');
       link.rel = 'stylesheet';
@@ -62,7 +79,7 @@
     const header = document.querySelector('header.site');
     if (!header) return;
     const path = location.pathname.split('/').pop() || 'index.html';
-    const active = path === 'istochniki.html' ? 'sources' : path === 'calendar.html' ? 'calendar' : 'home';
+    const active = path === 'istochniki.html' ? 'sources' : path === 'calendar.html' ? 'calendar' : path === 'my-submissions.html' ? 'submissions' : 'home';
     if (!header.querySelector('.ed-brand')) {
       header.innerHTML = `
         <div class="wrap">
@@ -74,9 +91,12 @@
             <a href="index.html" class="${active === 'home' ? 'active' : ''}"><span><b>01</b> / Подбор</span><small>найти программы</small></a>
             <a href="istochniki.html" class="${active === 'sources' ? 'active' : ''}"><span><b>02</b> / Источники</span><small>весь каталог</small></a>
             <a href="calendar.html" class="${active === 'calendar' ? 'active' : ''}"><span><b>03</b> / Дедлайны</span><small>календарь</small></a>
-            <a href="index.html#my-submissions"><span><b>04</b> / Мои подачи</span><small>мои проекты</small></a>
+            <a href="my-submissions.html" class="${active === 'submissions' ? 'active' : ''}"><span><b>04</b> / Мои подачи</span><small>мои проекты</small></a>
           </nav>
         </div>`;
+    } else {
+      const my = header.querySelector('#ed-my-nav, nav.tabs a[href*="my-submissions"]');
+      if (my) my.href = 'my-submissions.html';
     }
   }
 
@@ -204,14 +224,13 @@
     actions.className = 'target-header-actions';
     actions.innerHTML = `
       <button class="target-header-action" type="button" data-target-search aria-label="Поиск"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg></button>
-      <button class="target-header-action" type="button" data-target-favorites aria-label="Избранное"><svg viewBox="0 0 24 24"><path d="M6.5 3.5h11v17l-5.5-3.2-5.5 3.2z"></path></svg></button>
+      <a class="target-header-action" href="favorites.html" data-target-favorites aria-label="Избранное"><svg viewBox="0 0 24 24"><path d="M6.5 3.5h11v17l-5.5-3.2-5.5 3.2z"></path></svg></a>
       <button class="target-header-action" type="button" data-target-menu aria-label="Меню"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>`;
     wrap.append(actions);
     actions.querySelector('[data-target-search]')?.addEventListener('click', () => {
       document.getElementById('f-query')?.focus();
       document.getElementById('filters')?.scrollIntoView({behavior:'smooth',block:'center'});
     });
-    actions.querySelector('[data-target-favorites]')?.addEventListener('click', () => document.querySelector('[data-open-favorites]')?.click());
     actions.querySelector('[data-target-menu]')?.addEventListener('click', () => document.querySelector('header.site nav.tabs')?.classList.toggle('target-menu-open'));
   }
 
@@ -269,12 +288,12 @@
       <section class="personal-card">
         <h3>Мои подачи</h3>
         <div class="personal-stats"><div class="personal-stat"><b>${activeCount}</b><span>активных</span></div><div class="personal-stat"><b>${submittedCount}</b><span>подано</span></div><div class="personal-stat"><b>${waitingCount}</b><span>ждут результатов</span></div></div>
-        <div class="personal-actions"><a class="personal-action" href="#" data-open-my-shortcut>Открыть мои подачи <span>→</span></a></div>
+        <div class="personal-actions"><a class="personal-action" href="my-submissions.html">Открыть мои подачи <span>→</span></a></div>
       </section>
       <section class="personal-card">
         <h3>Избранное и сравнение</h3>
         <div class="personal-stats" style="grid-template-columns:1fr 1fr"><div class="personal-stat"><b>${favoriteCount}</b><span>в избранном</span></div><div class="personal-stat"><b>${state.compare.length}</b><span>в сравнении</span></div></div>
-        <div class="personal-actions"><a class="personal-action" href="#" data-open-favorites-shortcut>Избранное <span>→</span></a><a class="personal-action" href="#" data-open-compare-shortcut>Сравнение <span>→</span></a></div>
+        <div class="personal-actions"><a class="personal-action" href="favorites.html">Избранное <span>→</span></a><a class="personal-action" href="#" data-open-compare-shortcut>Сравнение <span>→</span></a></div>
       </section>
       <section class="personal-card personal-update">Данные и статусы хранятся локально в вашем браузере.</section>`;
 
@@ -283,8 +302,6 @@
     utility?.remove();
     ensureHeaderActions();
 
-    aside.querySelector('[data-open-my-shortcut]')?.addEventListener('click', e => { e.preventDefault(); document.querySelector('[data-open-my]')?.click(); });
-    aside.querySelector('[data-open-favorites-shortcut]')?.addEventListener('click', e => { e.preventDefault(); document.querySelector('[data-open-favorites]')?.click(); });
     aside.querySelector('[data-open-compare-shortcut]')?.addEventListener('click', e => { e.preventDefault(); document.querySelector('[data-open-compare-modal]')?.click(); });
   }
 
