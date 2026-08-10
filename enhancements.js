@@ -6,7 +6,7 @@
   const STORAGE_KEY = 'kino-finance-mvp-v1';
 
   function ensureStyles() {
-    for (const href of ['product.css?v=2026081103', 'product-home.css?v=2026081103']) {
+    for (const href of ['product.css?v=2026081106', 'product-home.css?v=2026081106', 'white-theme.css?v=2026081107', 'approved-home.css?v=2026081108']) {
       if ([...document.styleSheets].some(s => s.href?.includes(href.split('?')[0]))) continue;
       const link = document.createElement('link');
       link.rel = 'stylesheet';
@@ -168,6 +168,53 @@
     return [...text.matchAll(re)].map(m => new Date(Number(m[3] || now.getFullYear()), monthMap[m[2].toLowerCase()], Number(m[1]), 23, 59, 59)).filter(d => d >= now).sort((a,b) => a-b);
   }
 
+  function deadlineCandidates() {
+    const now = new Date();
+    const seen = new Set();
+    return allItems.map(item => {
+      const date = dateCandidates(item)[0];
+      return date ? { item, date, days: Math.max(0, Math.ceil((date - now) / 86400000)) } : null;
+    }).filter(Boolean).sort((a,b) => a.date - b.date).filter(entry => {
+      const key = `${entry.item.id || itemKey(entry.item)}|${entry.date.toISOString().slice(0,10)}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).slice(0,4);
+  }
+
+  function makeDeadlineSection() {
+    const entries = deadlineCandidates();
+    const section = document.createElement('section');
+    section.className = 'home-deadlines';
+    section.innerHTML = `
+      <div class="home-deadlines-head"><h2>Ближайшие дедлайны</h2><a href="calendar.html">Смотреть календарь →</a></div>
+      ${entries.length ? entries.map(entry => {
+        const item = entry.item;
+        const date = new Intl.DateTimeFormat('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'}).format(entry.date);
+        const urgent = entry.days <= 7;
+        return `<a class="home-deadline-row" href="calendar.html" style="text-decoration:none;color:inherit"><strong>${escapeHtml(date)}</strong><strong>${escapeHtml(item.org || item.title || 'Источник')}</strong><span class="muted">${escapeHtml(item.program || item.what_for || 'Приём заявок')}</span><span class="${urgent ? 'urgent' : 'muted'}">${urgent ? `Осталось ${entry.days} дн.` : `${entry.days} дней`}</span><span class="arrow">→</span></a>`;
+      }).join('') : '<div class="home-deadline-row"><span class="muted">Нет подтверждённых ближайших дат</span></div>'}`;
+    return section;
+  }
+
+  function ensureHeaderActions() {
+    const wrap = document.querySelector('body.product-home header.site > .wrap');
+    if (!wrap || wrap.querySelector('.target-header-actions')) return;
+    const actions = document.createElement('div');
+    actions.className = 'target-header-actions';
+    actions.innerHTML = `
+      <button class="target-header-action" type="button" data-target-search aria-label="Поиск"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg></button>
+      <button class="target-header-action" type="button" data-target-favorites aria-label="Избранное"><svg viewBox="0 0 24 24"><path d="M6.5 3.5h11v17l-5.5-3.2-5.5 3.2z"></path></svg></button>
+      <button class="target-header-action" type="button" data-target-menu aria-label="Меню"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>`;
+    wrap.append(actions);
+    actions.querySelector('[data-target-search]')?.addEventListener('click', () => {
+      document.getElementById('f-query')?.focus();
+      document.getElementById('filters')?.scrollIntoView({behavior:'smooth',block:'center'});
+    });
+    actions.querySelector('[data-target-favorites]')?.addEventListener('click', () => document.querySelector('[data-open-favorites]')?.click());
+    actions.querySelector('[data-target-menu]')?.addEventListener('click', () => document.querySelector('header.site nav.tabs')?.classList.toggle('target-menu-open'));
+  }
+
   function buildHomeLayout() {
     const main = document.querySelector('main.ed-main');
     if (!main || document.body.classList.contains('product-home')) return;
@@ -190,7 +237,8 @@
 
     const left = document.createElement('div');
     left.className = 'product-home-main';
-    [hero,panel,openSection,resultsHead,resultsGrid].forEach(node => node && left.append(node));
+    const deadlines = makeDeadlineSection();
+    [hero,panel,openSection,deadlines,resultsHead,resultsGrid].forEach(node => node && left.append(node));
 
     const state = parseState();
     const records = Object.values(state.records || {});
@@ -233,6 +281,7 @@
     main.insertBefore(left, footer || main.firstChild);
     main.insertBefore(aside, footer || null);
     utility?.remove();
+    ensureHeaderActions();
 
     aside.querySelector('[data-open-my-shortcut]')?.addEventListener('click', e => { e.preventDefault(); document.querySelector('[data-open-my]')?.click(); });
     aside.querySelector('[data-open-favorites-shortcut]')?.addEventListener('click', e => { e.preventDefault(); document.querySelector('[data-open-favorites]')?.click(); });
