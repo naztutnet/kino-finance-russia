@@ -10,8 +10,8 @@
 <link rel="stylesheet" href="style.css?v=2026081101">
 <link rel="stylesheet" href="horizontal.css?v=2026081101">
 <link rel="stylesheet" href="mvp.css?v=2026081101">
-<link rel="stylesheet" href="editorial.css?v=2026081110">
-<script src="enhancements.js?v=2026081110" defer></script>
+<link rel="stylesheet" href="editorial.css?v=2026081111">
+<script src="enhancements.js?v=2026081111" defer></script>
 <script src="mvp.js?v=2026081101" defer></script>
 <script src="requirements.js?v=2026081101" defer></script>
 <script src="pdf-export.js?v=2026081101" defer></script>
@@ -226,14 +226,63 @@ function renderEditorialOverview(){
   document.getElementById('stat-total').textContent=ITEMS.length;
   document.getElementById('stat-open').textContent=open.length;
   document.getElementById('stat-deadlines').textContent=near.length;
-  const chosen=(open.length?open:ITEMS).slice(0,4);
-  document.getElementById('ed-open-grid').innerHTML=chosen.map((i,idx)=>{
-    const url=i.link&&/^https?:\/\//i.test(i.link)?i.link:'istochniki.html';
-    const amount=i.max_amount_text||'условия программы';
-    const coverage=i.coverage_pct||i.returnable||'подробнее в карточке';
-    const deadline=i.deadline_text||'срок уточняется';
-    return `<a class="ed-open-card" href="${url}" ${url.startsWith('http')?'target="_blank" rel="noopener"':''}><div class="status">${appearsOpen(i)?'открыт':'актуально'}</div><div class="org">${i.org||i.title||'Источник'}</div><div class="program">${i.program||i.what_for||''}</div><div class="amount">${amount}</div><div class="coverage">${coverage}</div><div class="deadline">Дедлайн · ${deadline} <span style="float:right">→</span></div></a>`;
-  }).join('');
+
+  const featured=[
+    {
+      org:'Фонд кино',
+      program:'Государственный фонд',
+      amount:'₽ 80 млн',
+      coverage:'до 80% покрытия',
+      deadline:'17 сентября 2025',
+      status:'открыт',
+      statusClass:'',
+      url:'https://fond-kino.ru/',
+      footer:'Подробнее о программе'
+    },
+    {
+      org:'ИРИ',
+      program:'Онлайн-кинотеатры',
+      amount:'₽ 50 млн',
+      coverage:'до 70% покрытия',
+      deadline:'25 сентября 2025',
+      status:'открыт',
+      statusClass:'',
+      url:'https://xn--h1aax.xn--p1ai/',
+      footer:'Подробнее'
+    },
+    {
+      org:'ПОКИ',
+      program:'Социально значимые проекты',
+      amount:'₽ 10 млн',
+      coverage:'до 80% покрытия',
+      deadline:'11 сентября 2025',
+      status:'открыт',
+      statusClass:'',
+      url:'https://xn--80aeeqaabljrdbg6a3ahhcl4ay9hsa.xn--p1ai/grants',
+      footer:'Подробнее'
+    },
+    {
+      org:'Кинопрайм',
+      program:'Частное финансирование',
+      amount:'₽ 100 млн',
+      coverage:'индивидуальные условия',
+      deadline:'Уточняется',
+      status:'скоро закроется',
+      statusClass:'is-closing',
+      url:'https://www.kinoprimefoundation.com/',
+      footer:'Подробнее'
+    }
+  ];
+
+  document.getElementById('ed-open-grid').innerHTML=featured.map(i=>`
+    <a class="ed-open-card" href="${i.url}" target="_blank" rel="noopener">
+      <div class="status ${i.statusClass}">${i.status}</div>
+      <div class="org">${i.org}</div>
+      <div class="program">${i.program}</div>
+      <div class="amount">${i.amount}</div>
+      <div class="coverage">${i.coverage}</div>
+      <div class="deadline"><span>Дедлайн<br>${i.deadline}</span><span class="approved-card-more">${i.footer} →</span></div>
+    </a>`).join('');
 }
 function bindEditorialShortcuts(){
   const clickInjected=(selector)=>{const node=document.querySelector(selector);if(node)node.click();};
