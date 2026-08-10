@@ -6,37 +6,57 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>Помощник в поиске финансирования вашего проекта</title>
-<link rel="stylesheet" href="style.css?v=202608071230">
-<link rel="stylesheet" href="horizontal.css?v=202608071230">
-<link rel="stylesheet" href="mvp.css?v=202608071230">
-<script src="enhancements.js?v=202608071230" defer></script>
-<script src="mvp.js?v=202608071230" defer></script>
-<script src="requirements.js?v=202608071230" defer></script>
-<script src="pdf-export.js?v=202608071230" defer></script>
+<title>Кино-Финансирование.РФ — источники финансирования кино</title>
+<link rel="stylesheet" href="style.css?v=2026081101">
+<link rel="stylesheet" href="horizontal.css?v=2026081101">
+<link rel="stylesheet" href="mvp.css?v=2026081101">
+<link rel="stylesheet" href="editorial.css?v=2026081101">
+<script src="enhancements.js?v=2026081101" defer></script>
+<script src="mvp.js?v=2026081101" defer></script>
+<script src="requirements.js?v=2026081101" defer></script>
+<script src="pdf-export.js?v=2026081101" defer></script>
 </head>
 <body>
 <header class="site">
   <div class="wrap">
-    <div class="eyebrow">Справочник продюсера · Россия · 2026</div>
-    <h1>Помощник в поиске финансирования вашего проекта</h1>
-    <p class="sub">Укажите параметры проекта — инструмент подберёт подходящие фонды, рибейты, питчинги и гранты из базы источников.</p>
-    <nav class="tabs">
-      <a href="index.html" class="active">Помощник</a>
-      <a href="istochniki.html">Все источники</a>
-      <a href="calendar.html">Календарь</a>
+    <a class="ed-brand" href="index.html" aria-label="Кино-Финансирование.РФ — главная">
+      <strong>КИНО-<br>ФИНАНСИРОВАНИЕ.РФ</strong>
+      <span>Справочник источников финансирования российского кино</span>
+    </a>
+    <nav class="tabs" aria-label="Основная навигация">
+      <a href="index.html" class="active"><span><b>01</b> / ПОДБОР</span><small>найти подходящее</small></a>
+      <a href="istochniki.html"><span><b>02</b> / ИСТОЧНИКИ</span><small>весь каталог</small></a>
+      <a href="calendar.html"><span><b>03</b> / ДЕДЛАЙНЫ</span><small>календарь приёмов</small></a>
+      <a href="#my-submissions" id="ed-my-nav"><span><b>04</b> / МОИ ПОДАЧИ</span><small>мои проекты</small></a>
     </nav>
   </div>
 </header>
 
-<div class="wrap">
-  <div class="panel">
+<main class="ed-main">
+  <section class="ed-hero" aria-labelledby="page-title">
+    <div class="ed-hero-title">
+      <div class="ed-kicker">01 /</div>
+      <h1 id="page-title">Подбор<br>источников</h1>
+    </div>
+    <div class="ed-intro">
+      <p>Актуальная база государственных, региональных и частных программ поддержки кино в России. Сроки приёмов, требования, результаты и полезные ссылки — в одном месте.</p>
+      <a href="#filters">Как пользоваться справочником</a>
+    </div>
+    <div class="ed-stats" aria-label="Статистика справочника">
+      <div class="ed-stat"><div class="ed-stat-value" id="stat-total">—</div><div class="ed-stat-label">источника в справочнике</div></div>
+      <div class="ed-stat"><div class="ed-stat-value" id="stat-open">—</div><div class="ed-stat-label">открыты сейчас</div></div>
+      <div class="ed-stat"><div class="ed-stat-value" id="stat-deadlines">—</div><div class="ed-stat-label">дедлайна в ближайшие 30 дней</div></div>
+      <div class="ed-stat"><div class="ed-stat-value">6</div><div class="ed-stat-label">категорий финансирования</div></div>
+    </div>
+  </section>
+
+  <section class="panel" id="filters" aria-label="Параметры проекта">
     <h2>Параметры проекта</h2>
     <div class="grid-filters">
       <div class="field">
         <label for="f-type">Тип проекта</label>
         <select id="f-type">
-          <option value="any">Любой</option>
+          <option value="any">Все типы</option>
           <option value="feature">Полнометражный игровой</option>
           <option value="series">Сериал / видеоконтент</option>
           <option value="doc">Документальный</option>
@@ -45,34 +65,32 @@
         </select>
       </div>
       <div class="field">
-        <label for="f-stage">Стадия проекта</label>
+        <label for="f-stage">Стадия</label>
         <select id="f-stage">
-          <option value="any">Не важно</option>
+          <option value="any">Любая</option>
           <option value="project">В разработке / производстве</option>
           <option value="finished">Фильм уже готов</option>
         </select>
       </div>
       <div class="field">
-        <label for="f-region">Регион съёмок</label>
-        <select id="f-region">
-          <option value="any">Не важно / без привязки</option>
-        </select>
+        <label for="f-region">Регион</label>
+        <select id="f-region"><option value="any">Все регионы</option></select>
       </div>
       <div class="field">
-        <label for="f-query">Поиск по названию</label>
-        <input type="text" id="f-query" placeholder="например, Кинопрайм">
+        <label for="f-query">Поиск</label>
+        <input type="text" id="f-query" placeholder="Фонд, программа…">
       </div>
     </div>
 
-    <div class="grid-filters categories-only-grid" style="margin-top:16px;">
+    <div class="grid-filters categories-only-grid">
       <div class="field">
-        <label>Категории источников</label>
+        <label>Ещё фильтры</label>
         <div class="cat-checks">
           <label><input type="checkbox" value="gov" checked> Государственный</label>
           <label><input type="checkbox" value="priv" checked> Частный</label>
           <label><input type="checkbox" value="reg" checked> Региональный</label>
           <label><input type="checkbox" value="pitch" checked> Питчинг / фестиваль</label>
-          <label><input type="checkbox" value="grant" checked> Грант / лаборатория / акселератор</label>
+          <label><input type="checkbox" value="grant" checked> Грант / лаборатория</label>
           <label><input type="checkbox" value="intl" checked> Международный</label>
         </div>
       </div>
@@ -80,30 +98,46 @@
 
     <div class="check-row">
       <input type="checkbox" id="f-debut">
-      <label for="f-debut">Это дебютный проект</label>
+      <label for="f-debut">Только для дебютных проектов</label>
     </div>
 
     <div class="actions">
-      <button class="primary" id="go-btn">Подобрать</button>
-      <button class="ghost" id="reset-btn">Сбросить фильтры</button>
+      <button class="primary" id="go-btn">Подобрать →</button>
+      <button class="ghost" id="reset-btn">Сбросить</button>
     </div>
-  </div>
+  </section>
+
+  <section class="ed-section" aria-labelledby="open-title">
+    <div class="ed-section-head">
+      <h2 id="open-title">Открытые приёмы</h2>
+      <a href="istochniki.html">Смотреть все</a>
+    </div>
+    <div class="ed-open-grid" id="ed-open-grid"><div class="empty">Загружаем актуальные программы…</div></div>
+  </section>
 
   <div class="results-head" id="results-head" hidden>
-    <h2>Результаты</h2>
+    <h2>Результаты подбора</h2>
     <div class="count" id="results-count">—</div>
   </div>
   <div class="results-grid" id="results-grid" hidden></div>
 
+  <section class="ed-utility" id="my-submissions" aria-label="Инструменты">
+    <a class="ed-util" href="calendar.html"><strong>02 /</strong><b>Дедлайны</b><p>Календарь приёмов, защит и публикации результатов.</p></a>
+    <a class="ed-util" href="#" data-open-compare-shortcut><strong>03 /</strong><b>Сравнение</b><p>Сравните до четырёх программ одновременно.</p></a>
+    <a class="ed-util" href="#" data-open-my-shortcut><strong>04 /</strong><b>Мои подачи</b><p>Отслеживайте статус программ, которые выбрали для работы.</p></a>
+    <a class="ed-util" href="#filters"><strong>→</strong><b>Экспорт данных</b><p>PDF, CSV и персональные календари доступны после подбора.</p></a>
+  </section>
+
   <footer class="site">
-    Полный список источников доступен на странице «Все источники», а сроки подач и результатов — в разделе «Календарь». Данные соответствуют рабочей базе 0.4 от 2026-08-05. Перед подачей заявки сверяйтесь с официальным источником.
+    Данные обновляются по официальным источникам. Перед подачей заявки обязательно сверяйтесь с действующим положением конкурса и официальной страницей организатора.
   </footer>
-</div>
+</main>
 
 <script>
 let ITEMS=[];
 const CAT_SEAL={gov:'ГОС',priv:'ЧАСТ',reg:'РЕГ',pitch:'ПИТЧ',grant:'ГРАНТ',intl:'МЕЖД'};
 const BASIS_LABELS={prize:'приз / премия конкурса',stipend:'личная стипендия автору',pool_total:'общий пул региона/года',non_monetary:'нефинансовая поддержка',pathway:'преимущество в другом конкурсе',fund_unknown:'лимит на проект не раскрыт',unclear:'сумма не указана'};
+const MONTHS={января:0,февраля:1,марта:2,апреля:3,мая:4,июня:5,июля:6,августа:7,сентября:8,октября:9,ноября:10,декабря:11};
 
 function initFilters(){
   const sel=document.getElementById('f-region');
@@ -157,40 +191,63 @@ function card(i,reasons){
 function hideResults(){
   const head=document.getElementById('results-head');
   const grid=document.getElementById('results-grid');
-  head.hidden=true;
-  grid.hidden=true;
-  document.getElementById('results-count').textContent='—';
-  grid.innerHTML='';
+  head.hidden=true;grid.hidden=true;document.getElementById('results-count').textContent='—';grid.innerHTML='';
 }
 function render(){
   const f=filters();
   const matched=ITEMS.filter(i=>passes(i,f)).map(i=>({i,...score(i,f)})).sort((a,b)=>b.n-a.n||a.i.title.localeCompare(b.i.title,'ru'));
-  const head=document.getElementById('results-head');
-  const grid=document.getElementById('results-grid');
-  head.hidden=false;
-  grid.hidden=false;
-  document.getElementById('results-count').textContent=`Найдено: ${matched.length}`;
+  const head=document.getElementById('results-head');const grid=document.getElementById('results-grid');
+  head.hidden=false;grid.hidden=false;document.getElementById('results-count').textContent=`Найдено: ${matched.length}`;
   grid.innerHTML=matched.length?matched.map(x=>card(x.i,x.reasons)).join(''):'<div class="empty">Под такие параметры ничего не нашлось. Попробуйте снять часть фильтров.</div>';
+  head.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function reset(){
   ['f-type','f-stage','f-region'].forEach(id=>document.getElementById(id).value='any');
-  document.getElementById('f-debut').checked=false;
-  document.getElementById('f-query').value='';
-  document.querySelectorAll('.cat-checks input').forEach(x=>x.checked=true);
-  hideResults();
+  document.getElementById('f-debut').checked=false;document.getElementById('f-query').value='';
+  document.querySelectorAll('.cat-checks input').forEach(x=>x.checked=true);hideResults();
+}
+function dateFromText(text){
+  const s=String(text||'').toLowerCase().replace(/ё/g,'е');
+  const names=Object.keys(MONTHS).join('|');
+  const re=new RegExp(`(\\d{1,2})(?:\\s*[–—-]\\s*(\\d{1,2}))?\\s+(${names})(?:\\s+(20\\d{2}))?`,'g');
+  const found=[...s.matchAll(re)];if(!found.length)return null;
+  const m=found.at(-1);const year=Number(m[4]||2026);return new Date(year,MONTHS[m[3]],Number(m[2]||m[1]),23,59,59);
+}
+function appearsOpen(i){
+  const s=`${i.status||''} ${i.deadline_text||''}`.toLowerCase();
+  if(/закрыт|заверш|результат|не объявлен|не подтвержден/.test(s))return false;
+  if(/открыт|идёт|идет|непрерыв|постоян/.test(s))return true;
+  const d=dateFromText(i.deadline_text);return d?d>=new Date():false;
+}
+function renderEditorialOverview(){
+  const open=ITEMS.filter(appearsOpen);
+  const now=new Date();const horizon=new Date(now);horizon.setDate(horizon.getDate()+30);
+  const near=ITEMS.filter(i=>{const d=dateFromText(i.deadline_text);return d&&d>=now&&d<=horizon;});
+  document.getElementById('stat-total').textContent=ITEMS.length;
+  document.getElementById('stat-open').textContent=open.length;
+  document.getElementById('stat-deadlines').textContent=near.length;
+  const chosen=(open.length?open:ITEMS).slice(0,4);
+  document.getElementById('ed-open-grid').innerHTML=chosen.map((i,idx)=>{
+    const url=i.link&&/^https?:\/\//i.test(i.link)?i.link:'istochniki.html';
+    const amount=i.max_amount_text||'условия программы';
+    const coverage=i.coverage_pct||i.returnable||'подробнее в карточке';
+    const deadline=i.deadline_text||'срок уточняется';
+    return `<a class="ed-open-card" href="${url}" ${url.startsWith('http')?'target="_blank" rel="noopener"':''}><div class="status">${appearsOpen(i)?'открыт':'актуально'}</div><div class="org">${i.org||i.title||'Источник'}</div><div class="program">${i.program||i.what_for||''}</div><div class="amount">${amount}</div><div class="coverage">${coverage}</div><div class="deadline">Дедлайн · ${deadline} <span style="float:right">→</span></div></a>`;
+  }).join('');
+}
+function bindEditorialShortcuts(){
+  const clickInjected=(selector)=>{const node=document.querySelector(selector);if(node)node.click();};
+  document.querySelector('[data-open-compare-shortcut]')?.addEventListener('click',e=>{e.preventDefault();clickInjected('[data-open-compare-modal]');});
+  document.querySelector('[data-open-my-shortcut]')?.addEventListener('click',e=>{e.preventDefault();clickInjected('[data-open-my]');});
+  document.getElementById('ed-my-nav')?.addEventListener('click',e=>{e.preventDefault();clickInjected('[data-open-my]');});
 }
 async function boot(){
   const files=Array.from({length:10},(_,i)=>`./data-${String(i).padStart(2,'0')}.json`);
   const parts=await Promise.all(files.map(async file=>{const r=await fetch(file,{cache:'no-store'});if(!r.ok)throw new Error(file);return r.json();}));
-  ITEMS=parts.flatMap(p=>p.items||[]);
-  initFilters();
-  document.querySelectorAll('.field select,.field input,.cat-checks input,#f-debut').forEach(el=>{
-    el.addEventListener('input',hideResults);
-    el.addEventListener('change',hideResults);
-  });
-  document.getElementById('go-btn').addEventListener('click',render);
-  document.getElementById('reset-btn').addEventListener('click',reset);
-  hideResults();
+  ITEMS=parts.flatMap(p=>p.items||[]);initFilters();renderEditorialOverview();
+  document.querySelectorAll('.field select,.field input,.cat-checks input,#f-debut').forEach(el=>{el.addEventListener('input',hideResults);el.addEventListener('change',hideResults);});
+  document.getElementById('go-btn').addEventListener('click',render);document.getElementById('reset-btn').addEventListener('click',reset);hideResults();
+  setTimeout(bindEditorialShortcuts,250);
 }
 document.addEventListener('DOMContentLoaded',boot);
 </script>
