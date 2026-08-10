@@ -1,13 +1,25 @@
 /* Approved homepage reference lock — 2026-08-11, precision pass */
-body.product-home{background:#fff!important}
+body.product-home{background:#fff!important;overflow-x:hidden!important}
 body.product-home .ed-main{max-width:1500px;grid-template-columns:minmax(0,1fr) 330px;gap:34px;padding:30px 38px 34px}
-body.product-home .product-home-main{display:grid;grid-template-columns:minmax(400px,.96fr) minmax(455px,1.04fr);column-gap:44px;align-items:start}
+body.product-home .ed-main>.product-home-main{grid-column:1;grid-row:1;min-width:0;max-width:100%}
+body.product-home .ed-main>.home-personal{grid-column:2;grid-row:1;min-width:0}
+body.product-home .product-home-main{display:grid;grid-template-columns:minmax(400px,.96fr) minmax(455px,1.04fr);column-gap:44px;align-items:start;min-width:0;max-width:100%}
 body.product-home .ed-hero{grid-column:1;padding:7px 0 0!important;display:block!important}
 body.product-home .panel{grid-column:2;grid-row:1;margin:10px 0 0!important;padding:19px 21px 16px!important;border:1px solid #bdbdb8!important;border-radius:13px!important;box-shadow:none!important;background:#fff!important}
 body.product-home .ed-section,
 body.product-home .home-deadlines,
 body.product-home .results-head,
-body.product-home .results-grid{grid-column:1/-1}
+body.product-home .results-grid{grid-column:1/-1;min-width:0;max-width:100%}
+
+/* A race between mvp.js and enhancements.js could leave the export bar as a direct
+   child of the outer two-column grid. When it becomes visible after "Подобрать",
+   CSS grid would move the entire homepage into the second column. Never allow a
+   stray export bar to participate in the outer grid. If it was created after the
+   homepage layout, it lives inside .product-home-main and remains visible. */
+body.product-home .ed-main>.mvp-exportbar{display:none!important}
+body.product-home .product-home-main>.mvp-exportbar{grid-column:1/-1!important;min-width:0!important;max-width:100%!important;width:100%!important}
+body.product-home .results-grid{overflow-x:clip!important}
+body.product-home .results-grid .card{min-width:0!important;max-width:100%!important}
 
 /* Hero proportions from approved mockup */
 body.product-home .ed-hero-title{margin:0 0 15px}
@@ -89,6 +101,8 @@ body.product-home footer.site{grid-column:1/-1;margin-top:22px!important;padding
 
 @media(max-width:1180px){
  body.product-home .ed-main{grid-template-columns:1fr!important}
+ body.product-home .ed-main>.product-home-main{grid-column:1;grid-row:auto}
+ body.product-home .ed-main>.home-personal{grid-column:1;grid-row:auto}
  body.product-home .product-home-main{grid-template-columns:1fr 1fr!important}
  body.product-home .home-personal{position:static!important;grid-template-columns:repeat(3,1fr)!important}
  body.product-home .home-personal-label{grid-column:1/-1}
