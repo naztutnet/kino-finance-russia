@@ -1,0 +1,11 @@
+/* Pure white canvas — approved 2026-08-11 */
+:root{
+  --ui-bg:#ffffff;
+}
+html,
+body{
+  background:#ffffff !important;
+}
+header.site{
+  background:rgba(255,255,255,.97) !important;
+}
