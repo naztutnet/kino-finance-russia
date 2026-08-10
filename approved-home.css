@@ -1,0 +1,96 @@
+/* Approved homepage reference lock — 2026-08-11 */
+body.product-home{background:#fff!important}
+body.product-home .ed-main{max-width:1500px;grid-template-columns:minmax(0,1fr) 350px;gap:36px;padding:28px 38px 34px}
+body.product-home .product-home-main{display:grid;grid-template-columns:minmax(390px,.92fr) minmax(470px,1.08fr);column-gap:44px;align-items:start}
+body.product-home .ed-hero{grid-column:1;padding:8px 0 0;display:block!important}
+body.product-home .panel{grid-column:2;grid-row:1;margin:10px 0 0!important;padding:20px 22px 18px!important;border:1px solid #bdbdb8!important;border-radius:13px!important;box-shadow:none!important;background:#fff!important}
+body.product-home .ed-section,
+body.product-home .home-deadlines,
+body.product-home .results-head,
+body.product-home .results-grid{grid-column:1/-1}
+
+body.product-home .ed-hero-title{margin:0 0 16px}
+body.product-home .ed-hero h1{font-size:clamp(48px,4.15vw,66px)!important;line-height:.98!important;letter-spacing:-.055em!important;max-width:510px!important;font-weight:720!important}
+body.product-home .ed-intro{max-width:430px!important;margin:0 0 22px!important;color:#666!important;font-size:12px!important;line-height:1.45!important}
+body.product-home .ed-intro a{min-height:34px!important;padding:0 12px!important;font-size:9px!important;border-color:#dadad6!important}
+body.product-home .ed-stats{max-width:600px!important;grid-template-columns:repeat(4,1fr)!important;margin-top:18px!important}
+body.product-home .ed-stat{padding:12px 16px 8px 0!important}
+body.product-home .ed-stat-value{font-size:27px!important}
+body.product-home .ed-stat-label{font-size:8px!important;line-height:1.25!important}
+
+body.product-home .panel h2{font-size:14px!important;margin-bottom:15px!important}
+body.product-home .grid-filters{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+body.product-home .field select,body.product-home .field input[type=text]{min-height:42px!important;border-radius:9px!important;font-size:10px!important}
+body.product-home .categories-only-grid{margin-top:11px!important}
+body.product-home .cat-checks{gap:6px!important}
+body.product-home .cat-checks label{padding:5px 8px!important;font-size:8px!important;background:#f5f5f2!important}
+body.product-home .check-row{font-size:9px!important;margin-top:10px!important}
+body.product-home .actions{margin-top:12px!important;gap:8px!important}
+body.product-home button.primary,body.product-home button.ghost{min-height:38px!important;border-radius:9px!important;font-size:9px!important}
+
+body.product-home .ed-section{padding-top:34px!important}
+body.product-home .ed-section-head{margin-bottom:14px!important}
+body.product-home .ed-section-head h2{font-size:17px!important}
+body.product-home .ed-open-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}
+body.product-home .ed-open-card{min-height:258px!important;padding:17px!important;border-radius:14px!important;box-shadow:none!important}
+body.product-home .ed-open-card .org{font-size:14px!important}
+body.product-home .ed-open-card .program{font-size:9px!important;min-height:28px}
+body.product-home .ed-open-card .amount{margin-top:26px!important;font-size:26px!important;line-height:1.05!important}
+body.product-home .ed-open-card .coverage{font-size:9px!important}
+body.product-home .ed-open-card .deadline{font-size:8.5px!important;padding-top:12px!important}
+body.product-home .ed-open-card .status{font-size:7px!important;padding:3px 6px!important}
+
+body.product-home .home-personal{top:108px!important;gap:12px!important}
+body.product-home .home-personal-label{margin-left:6px!important;font-size:9px!important}
+body.product-home .personal-card{padding:18px!important;border-radius:14px!important;box-shadow:none!important;border-color:#deded9!important}
+body.product-home .personal-card h3{font-size:14px!important;margin-bottom:17px!important}
+body.product-home .personal-next-name{font-size:10px!important}
+body.product-home .personal-big{font-size:27px!important}
+body.product-home .personal-muted{font-size:9px!important}
+body.product-home .personal-stat b{font-size:22px!important}
+body.product-home .personal-stat span{font-size:8px!important}
+body.product-home .personal-action{min-height:37px!important;border-radius:9px!important;font-size:9px!important}
+
+/* Header: target reference uses icons, not pill counters */
+body.product-home header.site>.wrap{grid-template-columns:285px 1fr auto;max-width:1500px;padding:0 38px;min-height:86px}
+body.product-home header.site{background:#fff!important;backdrop-filter:none!important}
+body.product-home header.site .mvp-header-tools{display:none!important}
+body.product-home nav.tabs{gap:44px!important}
+body.product-home nav.tabs a{min-height:86px!important}
+body.product-home nav.tabs a span{font-size:12px!important}
+body.product-home nav.tabs a small{font-size:8px!important}
+.target-header-actions{display:flex;align-items:center;gap:22px;color:#111}
+.target-header-action{width:26px;height:36px;border:0;background:transparent;padding:0;display:grid;place-items:center;cursor:pointer;color:#111}
+.target-header-action svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* Deadline table from approved reference */
+.home-deadlines{margin:18px 0 0;border:1px solid #deded9;border-radius:14px;background:#fff;overflow:hidden}
+.home-deadlines-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 13px}
+.home-deadlines-head h2{margin:0;font-size:14px;letter-spacing:-.025em}
+.home-deadlines-head a{font-size:9px;color:#666;text-decoration:none}
+.home-deadline-row{display:grid;grid-template-columns:130px 210px 1fr 120px 24px;gap:14px;align-items:center;min-height:42px;padding:0 18px;border-top:1px solid #ecece8;font-size:9.5px}
+.home-deadline-row strong{font-size:9.5px}
+.home-deadline-row .muted{color:#666}
+.home-deadline-row .urgent{color:#e6652d}
+.home-deadline-row .arrow{text-align:right;font-size:16px}
+
+body.product-home .results-head[hidden],body.product-home .results-grid[hidden]{display:none!important}
+body.product-home footer.site{grid-column:1/-1}
+
+@media(max-width:1180px){
+ body.product-home .ed-main{grid-template-columns:1fr!important}
+ body.product-home .product-home-main{grid-template-columns:1fr 1fr!important}
+ body.product-home .home-personal{position:static!important;grid-template-columns:repeat(3,1fr)!important}
+ body.product-home .home-personal-label{grid-column:1/-1}
+ body.product-home .personal-update{grid-column:1/-1}
+}
+@media(max-width:820px){
+ body.product-home .product-home-main{grid-template-columns:1fr!important}
+ body.product-home .panel{grid-column:1;grid-row:auto;margin-top:20px!important}
+ body.product-home .ed-section,body.product-home .home-deadlines{grid-column:1}
+ body.product-home .ed-open-grid{grid-template-columns:repeat(2,1fr)!important}
+ body.product-home .home-personal{grid-template-columns:1fr!important}
+ .home-deadline-row{grid-template-columns:95px 1fr 24px}.home-deadline-row>:nth-child(3),.home-deadline-row>:nth-child(4){display:none}
+ .target-header-actions{display:none}
+}
+@media(max-width:560px){body.product-home .ed-open-grid{grid-template-columns:1fr!important}}
