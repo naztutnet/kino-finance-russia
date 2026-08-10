@@ -3,6 +3,17 @@
   const resultLinks = {};
   const itemLookup = new Map();
   const allItems = [];
+  const STORAGE_KEY = 'kino-finance-mvp-v1';
+
+  function ensureStyles() {
+    for (const href of ['product.css?v=2026081103', 'product-home.css?v=2026081103']) {
+      if ([...document.styleSheets].some(s => s.href?.includes(href.split('?')[0]))) continue;
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      document.head.append(link);
+    }
+  }
 
   function normalize(value = '') {
     return String(value).replace(/\s+/g, ' ').trim().toLowerCase();
@@ -47,6 +58,47 @@
     node.replaceWith(fragment);
   }
 
+  function upgradeHeader() {
+    const header = document.querySelector('header.site');
+    if (!header) return;
+    const path = location.pathname.split('/').pop() || 'index.html';
+    const active = path === 'istochniki.html' ? 'sources' : path === 'calendar.html' ? 'calendar' : 'home';
+    if (!header.querySelector('.ed-brand')) {
+      header.innerHTML = `
+        <div class="wrap">
+          <a class="ed-brand" href="index.html" aria-label="Кино-Финансирование.РФ — главная">
+            <strong>КИНО-<br>ФИНАНСИРОВАНИЕ.РФ</strong>
+            <span>Справочник источников финансирования российского кино</span>
+          </a>
+          <nav class="tabs" aria-label="Основная навигация">
+            <a href="index.html" class="${active === 'home' ? 'active' : ''}"><span><b>01</b> / Подбор</span><small>найти программы</small></a>
+            <a href="istochniki.html" class="${active === 'sources' ? 'active' : ''}"><span><b>02</b> / Источники</span><small>весь каталог</small></a>
+            <a href="calendar.html" class="${active === 'calendar' ? 'active' : ''}"><span><b>03</b> / Дедлайны</span><small>календарь</small></a>
+            <a href="index.html#my-submissions"><span><b>04</b> / Мои подачи</span><small>мои проекты</small></a>
+          </nav>
+        </div>`;
+    }
+  }
+
+  function addGeneratedHero() {
+    if (document.querySelector('.generated-page-hero')) return;
+    const path = location.pathname.split('/').pop();
+    let title = '', text = '', index = '';
+    if (path === 'istochniki.html') {
+      index = '02 / Источники';
+      title = 'Каталог источников';
+      text = 'Государственные и частные фонды, региональные программы, питчинги, гранты и международные возможности — в едином каталоге.';
+    } else if (path === 'calendar.html') {
+      index = '03 / Дедлайны';
+      title = 'Календарь дедлайнов';
+      text = 'Сроки подачи заявок, защиты и публикации результатов. Если точная дата не подтверждена организатором, она не подменяется предположением.';
+    } else return;
+    const hero = document.createElement('section');
+    hero.className = 'generated-page-hero';
+    hero.innerHTML = `<div><span class="hero-index">${index}</span><h1>${title}</h1></div><p>${text}</p>`;
+    document.querySelector('header.site')?.insertAdjacentElement('afterend', hero);
+  }
+
   function cardKey(card) {
     return `${normalize(card.querySelector('.org')?.textContent)}|${normalize(card.querySelector('.prog')?.textContent)}`;
   }
@@ -60,7 +112,6 @@
     if (!item) return;
     const rows = card.querySelector('.rows');
     if (!rows) return;
-
     const resultUrl = resultLinks[item.id] || item.results_link || '';
     if (resultUrl && !card.querySelector('.result-link-row')) {
       const row = document.createElement('div');
@@ -100,6 +151,94 @@
     });
   }
 
+  function parseState() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      return { records: parsed.records || {}, compare: Array.isArray(parsed.compare) ? parsed.compare : [] };
+    } catch (_) {
+      return { records: {}, compare: [] };
+    }
+  }
+
+  function dateCandidates(item) {
+    const text = `${item.deadline_text || ''} ${item.defense_date || ''} ${item.results_date || ''}`;
+    const monthMap = {января:0,февраля:1,марта:2,апреля:3,мая:4,июня:5,июля:6,августа:7,сентября:8,октября:9,ноября:10,декабря:11};
+    const re = /(\d{1,2})\s+(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)(?:\s+(20\d{2}))?/giu;
+    const now = new Date();
+    return [...text.matchAll(re)].map(m => new Date(Number(m[3] || now.getFullYear()), monthMap[m[2].toLowerCase()], Number(m[1]), 23, 59, 59)).filter(d => d >= now).sort((a,b) => a-b);
+  }
+
+  function buildHomeLayout() {
+    const main = document.querySelector('main.ed-main');
+    if (!main || document.body.classList.contains('product-home')) return;
+    document.body.classList.add('product-home');
+    const hero = main.querySelector('.ed-hero');
+    const panel = main.querySelector('.panel');
+    const openSection = main.querySelector('.ed-section');
+    const resultsHead = main.querySelector('.results-head');
+    const resultsGrid = main.querySelector('.results-grid');
+    const utility = main.querySelector('.ed-utility');
+    const footer = main.querySelector('footer.site');
+    if (!hero || !panel || !openSection) return;
+
+    const title = hero.querySelector('h1');
+    if (title) title.innerHTML = 'Финансирование<br>кино в России';
+    const intro = hero.querySelector('.ed-intro p');
+    if (intro) intro.textContent = 'Актуальная база государственных, региональных и частных программ поддержки кинопроектов.';
+    const panelTitle = panel.querySelector('h2');
+    if (panelTitle) panelTitle.textContent = 'Подберите подходящие программы';
+
+    const left = document.createElement('div');
+    left.className = 'product-home-main';
+    [hero,panel,openSection,resultsHead,resultsGrid].forEach(node => node && left.append(node));
+
+    const state = parseState();
+    const records = Object.values(state.records || {});
+    const favoriteCount = records.filter(r => r.favorite).length;
+    const statusValues = Object.values(state.records || {}).map(r => r.status).filter(Boolean);
+    const activeCount = statusValues.filter(v => v !== 'rejected').length;
+    const submittedCount = statusValues.filter(v => v === 'submitted').length;
+    const waitingCount = statusValues.filter(v => v === 'waiting').length;
+    const trackedIds = Object.entries(state.records || {}).filter(([,r]) => r.status && r.status !== 'rejected').map(([id]) => id);
+    const tracked = allItems.filter(i => trackedIds.includes(i.id));
+    const upcoming = tracked.map(item => ({item, dates:dateCandidates(item)})).filter(x => x.dates.length).sort((a,b) => a.dates[0]-b.dates[0])[0] || allItems.map(item => ({item,dates:dateCandidates(item)})).filter(x=>x.dates.length).sort((a,b)=>a.dates[0]-b.dates[0])[0];
+    const days = upcoming ? Math.max(0, Math.ceil((upcoming.dates[0]-new Date())/86400000)) : null;
+    const nextName = upcoming ? `${upcoming.item.org}${upcoming.item.program ? ' — ' + upcoming.item.program : ''}` : 'Добавьте программу в «Мои подачи»';
+    const nextDate = upcoming ? new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'}).format(upcoming.dates[0]) : 'Тогда здесь появится ближайшее действие';
+
+    const aside = document.createElement('aside');
+    aside.className = 'home-personal';
+    aside.id = 'my-submissions';
+    aside.innerHTML = `
+      <div class="home-personal-label">Моё</div>
+      <section class="personal-card">
+        <h3>Следующее действие</h3>
+        <div class="personal-next-name"><span class="personal-dot"></span><span>${escapeHtml(nextName)}</span></div>
+        <div class="personal-big">${days === null ? '—' : days} <small>${days === null ? '' : 'дней'}</small></div>
+        <div class="personal-muted">${escapeHtml(nextDate)}</div>
+        <div class="personal-actions"><a class="personal-action" href="calendar.html">К дедлайнам <span>→</span></a></div>
+      </section>
+      <section class="personal-card">
+        <h3>Мои подачи</h3>
+        <div class="personal-stats"><div class="personal-stat"><b>${activeCount}</b><span>активных</span></div><div class="personal-stat"><b>${submittedCount}</b><span>подано</span></div><div class="personal-stat"><b>${waitingCount}</b><span>ждут результатов</span></div></div>
+        <div class="personal-actions"><a class="personal-action" href="#" data-open-my-shortcut>Открыть мои подачи <span>→</span></a></div>
+      </section>
+      <section class="personal-card">
+        <h3>Избранное и сравнение</h3>
+        <div class="personal-stats" style="grid-template-columns:1fr 1fr"><div class="personal-stat"><b>${favoriteCount}</b><span>в избранном</span></div><div class="personal-stat"><b>${state.compare.length}</b><span>в сравнении</span></div></div>
+        <div class="personal-actions"><a class="personal-action" href="#" data-open-favorites-shortcut>Избранное <span>→</span></a><a class="personal-action" href="#" data-open-compare-shortcut>Сравнение <span>→</span></a></div>
+      </section>
+      <section class="personal-card personal-update">Данные и статусы хранятся локально в вашем браузере.</section>`;
+
+    main.insertBefore(left, footer || main.firstChild);
+    main.insertBefore(aside, footer || null);
+    utility?.remove();
+
+    aside.querySelector('[data-open-my-shortcut]')?.addEventListener('click', e => { e.preventDefault(); document.querySelector('[data-open-my]')?.click(); });
+    aside.querySelector('[data-open-favorites-shortcut]')?.addEventListener('click', e => { e.preventDefault(); document.querySelector('[data-open-favorites]')?.click(); });
+    aside.querySelector('[data-open-compare-shortcut]')?.addEventListener('click', e => { e.preventDefault(); document.querySelector('[data-open-compare-modal]')?.click(); });
+  }
+
   function syncMissingSources(attempt = 0) {
     try {
       if (!Array.isArray(ITEMS) || ITEMS.length === 0) {
@@ -124,11 +263,15 @@
     }
   }
 
+  ensureStyles();
   document.addEventListener('DOMContentLoaded', async () => {
     try {
+      upgradeHeader();
+      addGeneratedHero();
       await loadSupplementalData();
       syncMissingSources();
       process(document);
+      if ((location.pathname.split('/').pop() || 'index.html') === 'index.html') setTimeout(buildHomeLayout, 250);
       const observer = new MutationObserver(records => {
         for (const record of records) {
           for (const node of record.addedNodes) {
