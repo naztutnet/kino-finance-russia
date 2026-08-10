@@ -1,3 +1,4 @@
 /* Legacy entry point kept for index.html. The current design lives in product.css + product-home.css. */
 @import url('./product.css?v=2026081106');
 @import url('./product-home.css?v=2026081106');
+@import url('./white-theme.css?v=2026081107');
