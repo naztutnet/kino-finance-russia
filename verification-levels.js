@@ -8,7 +8,7 @@
   };
   const ORG_LOGOS = [
     { test: /фонд кино/i, src: 'https://fond-kino.ru/favicon.ico', alt: 'Фонд кино' },
-    { test: /(^|\s|\()ири(?:\s|$|\()/i, src: 'https://xn--h1aax.xn--p1ai/favicon.ico', alt: 'ИРИ' },
+    { test: /(^|\s|\()ири(?:\s|$|\()/i, src: 'assets/iri-mark.svg', alt: 'ИРИ' },
     { test: /пфки|президентск.*фонд.*культурн.*инициатив/i, src: 'https://xn--80aeeqaabljrdbg6a3ahhcl4ay9hsa.xn--p1ai/favicon.ico', alt: 'ПФКИ' },
     { test: /кинопрайм|kinoprime/i, src: 'https://www.kinoprimefoundation.com/favicon.ico', alt: 'Кинопрайм' }
   ];
