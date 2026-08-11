@@ -325,3 +325,81 @@ body.product-home .results-head .verification-legend{
   body.product-home .home-open-row .open-arrow{display:none!important}
   body.product-home .home-deadline-row{grid-template-columns:82px minmax(0,1fr) 16px!important}
 }
+
+/* Accessibility-critical pass — readable supporting text, AA contrast and
+   comfortable pointer/touch targets without changing the approved layout. */
+body.product-home .ed-intro,
+body.product-home .personal-muted,
+body.product-home .personal-stat span,
+body.product-home .personal-update,
+body.product-home .home-deadline-row .muted,
+body.product-home .key-source-role,
+body.product-home .key-source-types,
+body.product-home footer.site{
+  color:#555!important;
+}
+body.product-home .ed-stat-label,
+body.product-home .field label,
+body.product-home .home-personal-label{
+  color:#4f4f4c!important;
+}
+body.product-home .ed-stat-label{font-size:11px!important;line-height:1.35!important}
+body.product-home .personal-stat span{font-size:11px!important;line-height:1.35!important}
+body.product-home .personal-update{font-size:11px!important;line-height:1.45!important}
+body.product-home .key-source-badge{font-size:10px!important}
+body.product-home .key-source-link{font-size:11px!important;line-height:1.35!important}
+body.product-home .home-open-row .open-level{font-size:10px!important}
+body.product-home footer.site{font-size:11px!important;line-height:1.5!important}
+
+body.product-home a:focus-visible,
+body.product-home button:focus-visible,
+body.product-home input:focus-visible,
+body.product-home select:focus-visible{
+  outline:3px solid #111!important;
+  outline-offset:3px!important;
+}
+body.product-home .target-header-action{min-width:44px!important;min-height:44px!important}
+body.product-home .personal-action{min-height:44px!important;font-size:11px!important}
+body.product-home .key-source-link,
+body.product-home .ed-section-head a,
+body.product-home .home-open-now-head a,
+body.product-home .home-deadlines-head a{
+  display:inline-flex!important;
+  align-items:center!important;
+  min-height:44px!important;
+}
+
+@media(max-width:820px){
+  /* One row saves a full navigation row on the first screen. */
+  body.product-home nav.tabs{
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    gap:18px!important;
+    overflow-x:auto!important;
+    overscroll-behavior-inline:contain!important;
+    scrollbar-width:none!important;
+    scroll-snap-type:x proximity!important;
+  }
+  body.product-home nav.tabs::-webkit-scrollbar{display:none!important}
+  body.product-home nav.tabs a{
+    flex:0 0 auto!important;
+    min-width:max-content!important;
+    min-height:52px!important;
+    scroll-snap-align:start!important;
+  }
+  body.product-home .ed-brand{
+    display:inline-flex!important;
+    align-items:center!important;
+    min-height:44px!important;
+  }
+  body.product-home nav.tabs a span{font-size:12px!important}
+  body.product-home .ed-stat-label{font-size:12px!important;max-width:150px!important}
+  body.product-home .home-personal-label{font-size:12px!important}
+  body.product-home .personal-muted,
+  body.product-home .personal-stat span,
+  body.product-home .personal-update{font-size:12px!important}
+  body.product-home .key-source-role,
+  body.product-home .key-source-types,
+  body.product-home .key-source-link{font-size:12px!important}
+  body.product-home footer.site{font-size:12px!important}
+}
