@@ -3,15 +3,96 @@ VERSION:2.0
 PRODID:-//naztutnet//Kino Finance Russia//RU
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:Финансирование кино РФ — дедлайны
+X-WR-CALNAME:Финансирование кино — дедлайны
 X-WR-TIMEZONE:Europe/Moscow
 BEGIN:VEVENT
-UID:pfci-2027-first-deadline@kino-finance-russia
-DTSTAMP:20260805T231500Z
-DTSTART;VALUE=DATE:20260630
-DTEND;VALUE=DATE:20260701
-SUMMARY:Президентский фонд культурных инициатив — окончание подачи на первый конкурс 2027 года
-DESCRIPTION:Окончание приёма заявок — 30 июня 2026 года в 23:30 по московскому времени.
-URL:https://фондкультурныхинициатив.рф/
+UID:spb-pitch-2026@kino-finance-russia
+DTSTAMP:20260811T030000Z
+DTSTART;VALUE=DATE:20260815
+DTEND;VALUE=DATE:20260816
+SUMMARY:Дедлайн — 4-й Санкт-Петербургский питчинг дебютантов
+DESCRIPTION:Дедлайн подтверждён. Размер денежного приза требует отдельной проверки.
+URL:https://script.moviestart.ru/
+END:VEVENT
+BEGIN:VEVENT
+UID:baikal-pitch-2026@kino-finance-russia
+DTSTAMP:20260811T030000Z
+DTSTART;VALUE=DATE:20260816
+DTEND;VALUE=DATE:20260817
+SUMMARY:Дедлайн — Байкальский питчинг кинопроектов 2026
+DESCRIPTION:Существование конкурса и дедлайн подтверждены; точная сумма приза требует дополнительной проверки.
+URL:https://script.moviestart.ru/
+END:VEVENT
+BEGIN:VEVENT
+UID:eave-pw-2027@kino-finance-russia
+DTSTAMP:20260811T030000Z
+DTSTART;VALUE=DATE:20260817
+DTEND;VALUE=DATE:20260818
+SUMMARY:Дедлайн — EAVE Producers Workshop 2027
+DESCRIPTION:Программа и дедлайн подтверждены. Eligibility российского заявителя требует отдельной проверки.
+URL:https://eave.org/
+END:VEVENT
+BEGIN:VEVENT
+UID:berlinale-talents-early-2027@kino-finance-russia
+DTSTAMP:20260811T030000Z
+DTSTART;VALUE=DATE:20260819
+DTEND;VALUE=DATE:20260820
+SUMMARY:Early Bird — Berlinale Talents 2027
+DESCRIPTION:Официальный набор подтверждён; eligibility российского заявителя нужно проверять отдельно.
+URL:https://www.berlinale-talents.de/bt/page/c/apply
+END:VEVENT
+BEGIN:VEVENT
+UID:leff-pitch-2026@kino-finance-russia
+DTSTAMP:20260811T030000Z
+DTSTART;VALUE=DATE:20260822
+DTEND;VALUE=DATE:20260823
+SUMMARY:Питчинг — Lendoc Film Festival (LEFF)
+DESCRIPTION:Дата питчинга копродукционных проектов подтверждена. Текущий статус приёма заявок проверяйте отдельно.
+URL:https://lefflendoc.ru/
+END:VEVENT
+BEGIN:VEVENT
+UID:jih-ava-jb-films-2026@kino-finance-russia
+DTSTAMP:20260811T030000Z
+DTSTART;VALUE=DATE:20260831
+DTEND;VALUE=DATE:20260901
+SUMMARY:Дедлайн — Ji.hlava / JB Films Support 2026
+DESCRIPTION:До €40 000 на проект. Россия допустима при ограничениях программы, включая отсутствие поддержки российских государственных институтов.
+URL:https://www.ji-hlava.com/ji-hlava-jb-films
+END:VEVENT
+BEGIN:VEVENT
+UID:berlinale-talents-final-2027@kino-finance-russia
+DTSTAMP:20260811T030000Z
+DTSTART;VALUE=DATE:20260902
+DTEND;VALUE=DATE:20260903
+SUMMARY:Финальный дедлайн — Berlinale Talents 2027
+DESCRIPTION:Дедлайн подтверждён; eligibility российского заявителя проверяется отдельно.
+URL:https://www.berlinale-talents.de/bt/page/c/apply
+END:VEVENT
+BEGIN:VEVENT
+UID:dream-makers-2027@kino-finance-russia
+DTSTAMP:20260811T030000Z
+DTSTART;VALUE=DATE:20260902
+DTEND;VALUE=DATE:20260903
+SUMMARY:Дедлайн — Berlinale Talents: The Dream Makers
+DESCRIPTION:Project-support программа. Call подтверждён; сумма и eligibility российского заявителя требуют отдельной проверки.
+URL:https://www.berlinale-talents.de/bt/page/c/dreammakers
+END:VEVENT
+BEGIN:VEVENT
+UID:tavrida-grants-2026@kino-finance-russia
+DTSTAMP:20260811T030000Z
+DTSTART;VALUE=DATE:20260915
+DTEND;VALUE=DATE:20260916
+SUMMARY:Дедлайн — Росмолодёжь / Таврида.АРТ
+DESCRIPTION:Гранты творческим инициативам молодёжи — до 1,5 млн руб. Программа не является специализированным кинофондом.
+URL:https://tavrida.art/grants/grant-support
+END:VEVENT
+BEGIN:VEVENT
+UID:pfki-2027-results@kino-finance-russia
+DTSTAMP:20260811T030000Z
+DTSTART;VALUE=DATE:20261112
+DTEND;VALUE=DATE:20261113
+SUMMARY:Результаты — ПФКИ: первый конкурс 2027 года
+DESCRIPTION:Результаты должны быть опубликованы не позднее 12 ноября 2026 года. Приём завершён 30 июня; на экспертизу поступило 8 356 заявок.
+URL:https://фондкультурныхинициатив.рф/grants
 END:VEVENT
 END:VCALENDAR
