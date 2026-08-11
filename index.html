@@ -16,6 +16,7 @@
 <script src="mvp.js?v=2026081101" defer></script>
 <script src="requirements.js?v=2026081101" defer></script>
 <script src="pdf-export.js?v=2026081101" defer></script>
+<script src="verification-levels.js?v=2026081102" defer></script>
 </head>
 <body>
 <header class="site">
@@ -95,6 +96,14 @@
           <label><input type="checkbox" value="intl" checked> Международный</label>
         </div>
       </div>
+      <div class="field">
+        <label for="f-verification">Достоверность</label>
+        <select id="f-verification">
+          <option value="all">Показать всё</option>
+          <option value="A">Только A — проверенные</option>
+          <option value="AB">A+B — проверенные и частично</option>
+        </select>
+      </div>
     </div>
 
     <div class="check-row">
@@ -140,6 +149,8 @@ const CAT_SEAL={gov:'ГОС',priv:'ЧАСТ',reg:'РЕГ',pitch:'ПИТЧ',grant
 const BASIS_LABELS={prize:'приз / премия конкурса',stipend:'личная стипендия автору',pool_total:'общий пул региона/года',non_monetary:'нефинансовая поддержка',pathway:'преимущество в другом конкурсе',fund_unknown:'лимит на проект не раскрыт',unclear:'сумма не указана'};
 const MONTHS={января:0,февраля:1,марта:2,апреля:3,мая:4,июня:5,июля:6,августа:7,сентября:8,октября:9,ноября:10,декабря:11};
 
+function verificationLevel(i){return i.verification_level||(i.verification_status==='official'?'A':'C');}
+function verificationPass(i,mode){const level=verificationLevel(i);if(mode==='A')return level==='A';if(mode==='AB')return level==='A'||level==='B';return true;}
 function initFilters(){
   const sel=document.getElementById('f-region');
   [...new Set(ITEMS.map(i=>i.region).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ru')).forEach(r=>{
@@ -151,11 +162,13 @@ function filters(){return{
   stage:document.getElementById('f-stage').value,
   region:document.getElementById('f-region').value,
   debut:document.getElementById('f-debut').checked,
+  verification:document.getElementById('f-verification').value,
   query:document.getElementById('f-query').value.trim().toLowerCase(),
   cats:[...document.querySelectorAll('.cat-checks input:checked')].map(x=>x.value)
 };}
 function passes(i,f){
   if(!f.cats.includes(i.category))return false;
+  if(!verificationPass(i,f.verification))return false;
   if(f.stage!=='any'&&i.stage!=='any'&&i.stage!==f.stage)return false;
   if(f.type!=='any'&&!i.types.includes('any')&&!i.types.includes(f.type))return false;
   if(i.category==='reg'&&f.region!=='any'&&i.region!==f.region)return false;
@@ -198,13 +211,16 @@ function render(){
   const f=filters();
   const matched=ITEMS.filter(i=>passes(i,f)).map(i=>({i,...score(i,f)})).sort((a,b)=>b.n-a.n||a.i.title.localeCompare(b.i.title,'ru'));
   const head=document.getElementById('results-head');const grid=document.getElementById('results-grid');
-  head.hidden=false;grid.hidden=false;document.getElementById('results-count').textContent=`Найдено: ${matched.length}`;
+  head.hidden=false;grid.hidden=false;
+  const modeLabel=f.verification==='A'?' · только A':f.verification==='AB'?' · A+B':'';
+  document.getElementById('results-count').textContent=`Найдено: ${matched.length}${modeLabel}`;
   grid.innerHTML=matched.length?matched.map(x=>card(x.i,x.reasons)).join(''):'<div class="empty">Под такие параметры ничего не нашлось. Попробуйте снять часть фильтров.</div>';
   const top=head.getBoundingClientRect().top+window.scrollY-96;
   window.scrollTo({top:Math.max(0,top),left:0,behavior:'smooth'});
 }
 function reset(){
   ['f-type','f-stage','f-region'].forEach(id=>document.getElementById(id).value='any');
+  document.getElementById('f-verification').value='all';
   document.getElementById('f-debut').checked=false;document.getElementById('f-query').value='';
   document.querySelectorAll('.cat-checks input').forEach(x=>x.checked=true);hideResults();
 }
