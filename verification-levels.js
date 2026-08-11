@@ -71,9 +71,12 @@
       body.product-home .ed-section.key-sources-section .ed-open-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;margin-bottom:0!important}
       .key-source-card{position:relative;display:flex;flex-direction:column;min-height:184px;padding:16px;border:1px solid #deded9;border-radius:14px;background:#fff;color:#111;text-decoration:none;transition:transform .14s ease,border-color .14s ease}
       .key-source-card:hover{transform:translateY(-1px);border-color:#aaa}
-      .key-source-badge{position:absolute;top:13px;right:13px;padding:3px 6px;border:1px solid #a8d9b1;border-radius:999px;background:#edf8ef;color:#20833a;font-size:6.5px;font-weight:850;letter-spacing:.03em;text-transform:uppercase}
-      .key-source-name{max-width:70%;font-size:15px;font-weight:800;line-height:1.08;letter-spacing:-.025em}
-      .key-source-name.has-fund-logo{display:flex;align-items:center;gap:8px;max-width:76%}
+      .key-source-badge{position:absolute;top:13px;right:13px;display:grid;place-items:center;width:28px;height:28px;padding:0;border:1px solid #a8d9b1;border-radius:50%;background:#edf8ef;color:#20833a;font-size:10px;font-weight:900;line-height:1;letter-spacing:0;text-transform:uppercase}
+      .key-source-badge[data-level="B"]{background:#fff3d7;border-color:#e5c978;color:#8b6512}
+      .key-source-badge[data-level="C"]{background:#fff0ed;border-color:#e9b4ab;color:#a53d30}
+      .key-source-badge[data-level="D"]{background:#eeeeec;border-color:#c9c9c4;color:#50504d}
+      .key-source-name{max-width:calc(100% - 42px);font-size:15px;font-weight:800;line-height:1.08;letter-spacing:-.025em}
+      .key-source-name.has-fund-logo{display:flex;align-items:center;gap:8px;max-width:calc(100% - 42px)}
       .key-source-role{margin-top:6px;min-height:28px;color:#666;font-size:8px;line-height:1.35}
       .key-source-types{margin-top:17px;color:#333;font-size:9px;line-height:1.35}
       .key-source-fact{margin-top:auto;padding-top:13px;border-top:1px solid #e4e4df;font-size:11px;font-weight:750;line-height:1.25}
@@ -273,7 +276,7 @@
 
     grid.innerHTML = keySources.map(source => `
       <a class="key-source-card" href="istochniki.html?query=${encodeURIComponent(source.query)}">
-        <span class="key-source-badge">A · проверено</span>
+        <span class="key-source-badge" data-level="A" title="A — Проверено" aria-label="Статус A — проверено">A</span>
         <div class="key-source-name${logoFor(source.name) ? ' has-fund-logo' : ''}">${logoMarkup(source.name)}<span>${esc(source.name)}</span></div>
         <div class="key-source-role">${esc(source.role)}</div>
         <div class="key-source-types">${esc(source.types)}</div>
