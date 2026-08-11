@@ -19,13 +19,15 @@
     const style = document.createElement('style');
     style.id = 'verification-level-styles';
     style.textContent = `
-      .verification-level-badge{display:flex;align-items:center;gap:8px;margin:0;padding:8px 12px;border-top:1px solid rgba(0,0,0,.10);border-bottom:1px solid rgba(0,0,0,.10);font-size:11px;line-height:1.25;background:#f5f5f5;color:#222}
+      .verification-level-badge{display:flex;align-items:center;gap:8px;margin:0;padding:8px 12px;border:1px solid rgba(0,0,0,.10);border-radius:999px;font-size:11px;line-height:1.25;background:#f5f5f5;color:#222}
       .verification-level-badge strong{font-size:10px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
       .verification-level-badge span{color:#5a5a5a}
-      .verification-level-badge[data-level="A"]{background:#edf6ee}
-      .verification-level-badge[data-level="B"]{background:#fff7df}
-      .verification-level-badge[data-level="C"]{background:#fff0ed}
-      .verification-level-badge[data-level="D"]{background:#ececec}
+      .verification-level-badge[data-level="A"]{background:#edf6ee;border-color:#a8d9b1;color:#26783a}
+      .verification-level-badge[data-level="B"]{background:#fff7df;border-color:#e5c978;color:#8b6512}
+      .verification-level-badge[data-level="C"]{background:#fff0ed;border-color:#e9b4ab;color:#a53d30}
+      .verification-level-badge[data-level="D"]{background:#ececec;border-color:#c9c9c4;color:#50504d}
+      .card .cat-bar .verification-level-badge{width:max-content;max-width:100%;margin-top:9px;padding:5px 8px}
+      .card .cat-bar .verification-level-badge span{display:none}
 
       body.product-home .key-sources-section .ed-section-head::after,
       body:not(.product-home) .results-head:has(+ .quicknav)::after{content:none!important;display:none!important}
@@ -69,6 +71,7 @@
       }
       @media(max-width:640px){
         .verification-level-badge{align-items:flex-start;flex-direction:column;gap:3px}
+        .card .cat-bar .verification-level-badge{align-items:center;flex-direction:row}
         .verification-legend{gap:5px;font-size:10.5px}
         .verification-legend-item{padding:5px 8px}
         body.product-home .ed-section.key-sources-section .ed-open-grid{grid-template-columns:1fr!important}
@@ -95,9 +98,10 @@
     const badge = document.createElement('div');
     badge.className = 'verification-level-badge';
     badge.dataset.level = level;
+    badge.title = info[1];
     badge.innerHTML = `<strong>${info[0]}</strong><span>${info[1]}</span>`;
     const cat = card.querySelector('.cat-bar');
-    if (cat) cat.insertAdjacentElement('afterend', badge); else card.prepend(badge);
+    if (cat) cat.append(badge); else card.prepend(badge);
   }
 
   function scan(root = document) {
