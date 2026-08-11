@@ -6,6 +6,12 @@
     C: ['C · Требуется проверка', 'Конкретный механизм или часть заявленных параметров пока не подтверждены'],
     D: ['D · Ограничено / реструктурировано', 'Есть существенное ограничение, ошибка исходной трактовки или структурное изменение']
   };
+  const ORG_LOGOS = [
+    { test: /фонд кино/i, src: 'https://fond-kino.ru/favicon.ico', alt: 'Фонд кино' },
+    { test: /(^|\s|\()ири(?:\s|$|\()/i, src: 'https://xn--h1aax.xn--p1ai/favicon.ico', alt: 'ИРИ' },
+    { test: /пфки|президентск.*фонд.*культурн.*инициатив/i, src: 'https://xn--80aeeqaabljrdbg6a3ahhcl4ay9hsa.xn--p1ai/favicon.ico', alt: 'ПФКИ' },
+    { test: /кинопрайм|kinoprime/i, src: 'https://www.kinoprimefoundation.com/favicon.ico', alt: 'Кинопрайм' }
+  ];
   const MONTHS = {января:0,февраля:1,марта:2,апреля:3,мая:4,июня:5,июля:6,августа:7,сентября:8,октября:9,ноября:10,декабря:11};
   let byId = new Map();
   let byKey = new Map();
@@ -13,6 +19,11 @@
   const norm = v => String(v || '').replace(/\s+/g, ' ').trim().toLowerCase();
   const key = (org, program) => `${norm(org)}|${norm(program)}`;
   const esc = v => String(v || '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  const logoFor = value => ORG_LOGOS.find(entry => entry.test.test(String(value || ''))) || null;
+  const logoMarkup = value => {
+    const logo = logoFor(value);
+    return logo ? `<span class="fund-logo" aria-hidden="true"><img src="${esc(logo.src)}" alt="" loading="lazy" onerror="this.parentNode.remove()"></span>` : '';
+  };
 
   function injectStyles() {
     if (document.getElementById('verification-level-styles')) return;
@@ -28,6 +39,12 @@
       .verification-level-badge[data-level="D"]{background:#ececec;border-color:#c9c9c4;color:#50504d}
       .card .cat-bar .verification-level-badge{width:max-content;max-width:100%;margin-top:9px;padding:5px 8px}
       .card .cat-bar .verification-level-badge span{display:none}
+
+      .fund-logo{display:inline-grid;place-items:center;flex:0 0 auto;width:24px;height:24px;border:1px solid #e4e4df;border-radius:7px;background:#fff;overflow:hidden}
+      .fund-logo img{display:block;max-width:18px;max-height:18px;width:auto;height:auto;object-fit:contain}
+      .card .cat-bar .org.has-fund-logo{display:flex;align-items:center;gap:8px}
+      .card .cat-bar .org.has-fund-logo .fund-logo{width:22px;height:22px;border-radius:6px}
+      .card .cat-bar .org.has-fund-logo .fund-logo img{max-width:16px;max-height:16px}
 
       body.product-home .key-sources-section .ed-section-head::after,
       body:not(.product-home) .results-head:has(+ .quicknav)::after{content:none!important;display:none!important}
@@ -46,6 +63,7 @@
       .key-source-card:hover{transform:translateY(-1px);border-color:#aaa}
       .key-source-badge{position:absolute;top:13px;right:13px;padding:3px 6px;border:1px solid #a8d9b1;border-radius:999px;background:#edf8ef;color:#20833a;font-size:6.5px;font-weight:850;letter-spacing:.03em;text-transform:uppercase}
       .key-source-name{max-width:70%;font-size:15px;font-weight:800;line-height:1.08;letter-spacing:-.025em}
+      .key-source-name.has-fund-logo{display:flex;align-items:center;gap:8px;max-width:76%}
       .key-source-role{margin-top:6px;min-height:28px;color:#666;font-size:8px;line-height:1.35}
       .key-source-types{margin-top:17px;color:#333;font-size:9px;line-height:1.35}
       .key-source-fact{margin-top:auto;padding-top:13px;border-top:1px solid #e4e4df;font-size:11px;font-weight:750;line-height:1.25}
@@ -76,6 +94,8 @@
         .verification-legend-item{padding:5px 8px}
         body.product-home .ed-section.key-sources-section .ed-open-grid{grid-template-columns:1fr!important}
         .key-source-card{min-height:160px}
+        .fund-logo{width:22px;height:22px}
+        .fund-logo img{max-width:16px;max-height:16px}
       }
     `;
     document.head.append(style);
@@ -89,10 +109,21 @@
     return byKey.get(key(org, program)) || null;
   }
 
+  function addCatalogLogo(card, item) {
+    const org = card.querySelector('.cat-bar .org');
+    if (!org || org.querySelector('.fund-logo')) return;
+    const logo = logoFor(item?.org || org.textContent);
+    if (!logo) return;
+    org.classList.add('has-fund-logo');
+    org.insertAdjacentHTML('afterbegin', logoMarkup(item?.org || org.textContent));
+  }
+
   function enhance(card) {
-    if (!(card instanceof Element) || !card.matches('.card') || card.querySelector('.verification-level-badge')) return;
+    if (!(card instanceof Element) || !card.matches('.card')) return;
     const item = findItem(card);
     if (!item) return;
+    addCatalogLogo(card, item);
+    if (card.querySelector('.verification-level-badge')) return;
     const level = item.verification_level || (item.verification_status === 'official' ? 'A' : 'C');
     const info = LABELS[level] || LABELS.C;
     const badge = document.createElement('div');
@@ -213,7 +244,7 @@
     grid.innerHTML = keySources.map(source => `
       <a class="key-source-card" href="istochniki.html?query=${encodeURIComponent(source.query)}">
         <span class="key-source-badge">A · проверено</span>
-        <div class="key-source-name">${esc(source.name)}</div>
+        <div class="key-source-name${logoFor(source.name) ? ' has-fund-logo' : ''}">${logoMarkup(source.name)}<span>${esc(source.name)}</span></div>
         <div class="key-source-role">${esc(source.role)}</div>
         <div class="key-source-types">${esc(source.types)}</div>
         <div class="key-source-fact">${esc(source.fact)}</div>
