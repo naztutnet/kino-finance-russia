@@ -23,7 +23,7 @@
   }, true);
 
   function ensureStyles() {
-    for (const href of ['product.css?v=2026081106', 'product-home.css?v=2026081106', 'white-theme.css?v=2026081107', 'approved-home.css?v=2026081121', 'header-system.css?v=2026081104', 'heading-system.css?v=2026081123']) {
+    for (const href of ['product.css?v=2026081106', 'product-home.css?v=2026081106', 'white-theme.css?v=2026081107', 'approved-home.css?v=2026081121', 'header-system.css?v=2026081104', 'heading-system.css?v=2026081123', 'readability-system.css?v=2026081201']) {
       if ([...document.styleSheets].some(s => s.href?.includes(href.split('?')[0]))) continue;
       const link = document.createElement('link');
       link.rel = 'stylesheet';
@@ -32,6 +32,8 @@
     }
     const headingStyles = [...document.querySelectorAll('link[rel="stylesheet"]')].find(link => link.href.includes('heading-system.css'));
     if (headingStyles) document.head.append(headingStyles);
+    const readabilityStyles = [...document.querySelectorAll('link[rel="stylesheet"]')].find(link => link.href.includes('readability-system.css'));
+    if (readabilityStyles) document.head.append(readabilityStyles);
   }
 
   function normalize(value = '') {
