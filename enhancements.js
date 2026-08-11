@@ -266,25 +266,11 @@
     const activeCount = statusValues.filter(v => v !== 'rejected').length;
     const submittedCount = statusValues.filter(v => v === 'submitted').length;
     const waitingCount = statusValues.filter(v => v === 'waiting').length;
-    const trackedIds = Object.entries(state.records || {}).filter(([,r]) => r.status && r.status !== 'rejected').map(([id]) => id);
-    const tracked = allItems.filter(i => trackedIds.includes(i.id));
-    const upcoming = tracked.map(item => ({item, dates:dateCandidates(item)})).filter(x => x.dates.length).sort((a,b) => a.dates[0]-b.dates[0])[0] || allItems.map(item => ({item,dates:dateCandidates(item)})).filter(x=>x.dates.length).sort((a,b)=>a.dates[0]-b.dates[0])[0];
-    const days = upcoming ? Math.max(0, Math.ceil((upcoming.dates[0]-new Date())/86400000)) : null;
-    const nextName = upcoming ? `${upcoming.item.org}${upcoming.item.program ? ' — ' + upcoming.item.program : ''}` : 'Добавьте программу в «Мои подачи»';
-    const nextDate = upcoming ? new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'}).format(upcoming.dates[0]) : 'Тогда здесь появится ближайшее действие';
-
     const aside = document.createElement('aside');
     aside.className = 'home-personal';
     aside.id = 'my-submissions';
     aside.innerHTML = `
       <div class="home-personal-label">Моё</div>
-      <section class="personal-card">
-        <h3>Следующее действие</h3>
-        <div class="personal-next-name"><span class="personal-dot"></span><span>${escapeHtml(nextName)}</span></div>
-        <div class="personal-big">${days === null ? '—' : days} <small>${days === null ? '' : 'дней'}</small></div>
-        <div class="personal-muted">${escapeHtml(nextDate)}</div>
-        <div class="personal-actions"><a class="personal-action" href="calendar.html">К дедлайнам <span>→</span></a></div>
-      </section>
       <section class="personal-card">
         <h3>Мои подачи</h3>
         <div class="personal-stats"><div class="personal-stat"><b>${activeCount}</b><span>активных</span></div><div class="personal-stat"><b>${submittedCount}</b><span>подано</span></div><div class="personal-stat"><b>${waitingCount}</b><span>ждут результатов</span></div></div>
