@@ -23,7 +23,7 @@
   }, true);
 
   function ensureStyles() {
-    for (const href of ['product.css?v=2026081106', 'product-home.css?v=2026081106', 'white-theme.css?v=2026081107', 'approved-home.css?v=2026081121', 'header-system.css?v=2026081101', 'heading-system.css?v=2026081122']) {
+    for (const href of ['product.css?v=2026081106', 'product-home.css?v=2026081106', 'white-theme.css?v=2026081107', 'approved-home.css?v=2026081121', 'header-system.css?v=2026081101', 'heading-system.css?v=2026081123']) {
       if ([...document.styleSheets].some(s => s.href?.includes(href.split('?')[0]))) continue;
       const link = document.createElement('link');
       link.rel = 'stylesheet';
