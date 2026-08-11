@@ -346,7 +346,29 @@ body.product-home .home-personal-label{
 body.product-home .ed-stat-label{font-size:11px!important;line-height:1.35!important}
 body.product-home .personal-stat span{font-size:11px!important;line-height:1.35!important}
 body.product-home .personal-update{font-size:11px!important;line-height:1.45!important}
-body.product-home .key-source-badge{font-size:11px!important;padding:0!important}
+/* Keep curated source statuses as true one-letter markers even when an older
+   cached script has rendered the former "A · проверено" label. */
+body.product-home .key-source-card .key-source-badge{
+  display:grid!important;
+  place-items:center!important;
+  width:28px!important;
+  min-width:28px!important;
+  height:28px!important;
+  min-height:28px!important;
+  padding:0!important;
+  border-radius:50%!important;
+  font-size:0!important;
+  line-height:1!important;
+  overflow:hidden!important;
+}
+body.product-home .key-source-card .key-source-badge::after{
+  content:'A';
+  font-family:inherit;
+  font-size:11px;
+  font-weight:900;
+  line-height:1;
+  letter-spacing:0;
+}
 body.product-home .key-source-link{font-size:11px!important;line-height:1.35!important}
 body.product-home .home-open-row .open-level{font-size:10px!important}
 body.product-home footer.site{font-size:11px!important;line-height:1.5!important}
