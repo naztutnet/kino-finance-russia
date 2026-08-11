@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -144,20 +146,22 @@ let ITEMS=[],BLOCKS=[];
 const CAT_SEAL={gov:'ГОС',priv:'ЧАСТ',reg:'РЕГ',pitch:'ПИТЧ',grant:'ГРАНТ',intl:'МЕЖД'};
 const BASIS_LABELS={prize:'приз / премия конкурса',stipend:'личная стипендия автору',pool_total:'общий пул региона/года',non_monetary:'нефинансовая поддержка',pathway:'преимущество в другом конкурсе',fund_unknown:'лимит на проект не раскрыт',unclear:'сумма не указана'};
 function verificationLevel(i){return i.verification_level||(i.verification_status==='official'?'A':'C');}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function verificationPass(level,mode){
   if(['A','B','C','D'].includes(mode))return level===mode;
   if(mode==='AB')return level==='A'||level==='B';
   return true;
 }
-function linkify(v){return v&&/^https?:\/\//i.test(v)?`<a href="${v}" target="_blank" rel="noopener">Официальный источник</a>`:v||'';}
+function linkify(v){return v&&/^https?:\/\//i.test(v)?`<a href="${esc(v)}" target="_blank" rel="noopener noreferrer">Официальный источник</a>`:esc(v);}
 function card(i){
-  const rows=[];const add=(k,v)=>{if(v)rows.push(`<div class="row"><div class="k">${k}</div><div class="v">${v}</div></div>`);};
+  const rows=[];const add=(k,v)=>{if(v)rows.push(`<div class="row"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div></div>`);};
   add('Для чего',i.what_for);add('Финансирование',[i.max_amount_text,i.coverage_pct,i.returnable].filter(Boolean).join(' · '));add('Регион',i.region);
   add('Сроки',[i.deadline_text&&`приём: ${i.deadline_text}`,i.defense_date&&`защита: ${i.defense_date}`,i.results_date&&`результаты: ${i.results_date}`].filter(Boolean).join(' · '));
-  add('Статус',[i.results_summary,i.status].filter(Boolean).join(' · '));if(i.amount&&i.amount.note)add('Пояснение',i.amount.note);add('Контакты',i.contacts);add('Ссылка',linkify(i.link));add('Заметка',i.note);
+  add('Статус',[i.results_summary,i.status].filter(Boolean).join(' · '));if(i.amount&&i.amount.note)add('Пояснение',i.amount.note);add('Контакты',i.contacts);if(i.link)rows.push(`<div class="row"><div class="k">Ссылка</div><div class="v">${linkify(i.link)}</div></div>`);add('Заметка',i.note);
   const basis=i.amount&&BASIS_LABELS[i.amount.basis]?`<div class="reasons"><span class="chip chip-basis">${BASIS_LABELS[i.amount.basis]}</span></div>`:'';
   const search=`${i.title} ${i.org} ${i.program} ${i.what_for}`.toLowerCase().replace(/"/g,'');
-  return `<article class="card" style="--accent:var(--${i.category})" data-cat="${i.category}" data-verification="${verificationLevel(i)}" data-search="${search}"><div class="cat-bar"><div class="org">${i.org}</div>${i.program?`<div class="prog">${i.program}</div>`:''}<div class="seal">${CAT_SEAL[i.category]}</div></div>${basis}<div class="rows">${rows.join('')}</div></article>`;
+  const category=Object.hasOwn(CAT_SEAL,i.category)?i.category:'grant';
+  return `<article class="card" style="--accent:var(--${category})" data-cat="${category}" data-verification="${esc(verificationLevel(i))}" data-search="${esc(search)}"><div class="cat-bar"><div class="org">${esc(i.org)}</div>${i.program?`<div class="prog">${esc(i.program)}</div>`:''}<div class="seal">${CAT_SEAL[category]}</div></div>${basis}<div class="rows">${rows.join('')}</div></article>`;
 }
 function renderAll(){
   document.getElementById('quicknav').innerHTML=BLOCKS.map(b=>`<a href="#block-${b.num}">${b.num}. ${b.title} (${ITEMS.filter(i=>i.block===b.num).length})</a>`).join('');
