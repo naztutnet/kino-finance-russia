@@ -349,6 +349,7 @@ body.product-home .personal-update{font-size:11px!important;line-height:1.45!imp
 /* Keep curated source statuses as true one-letter markers even when an older
    cached script has rendered the former "A · проверено" label. */
 body.product-home .key-source-card .key-source-badge{
+  top:17px!important;
   display:grid!important;
   place-items:center!important;
   width:22px!important;

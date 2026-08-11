@@ -23,7 +23,7 @@
   }, true);
 
   function ensureStyles() {
-    for (const href of ['product.css?v=2026081106', 'product-home.css?v=2026081106', 'white-theme.css?v=2026081107', 'approved-home.css?v=2026081118']) {
+    for (const href of ['product.css?v=2026081106', 'product-home.css?v=2026081106', 'white-theme.css?v=2026081107', 'approved-home.css?v=2026081119']) {
       if ([...document.styleSheets].some(s => s.href?.includes(href.split('?')[0]))) continue;
       const link = document.createElement('link');
       link.rel = 'stylesheet';
