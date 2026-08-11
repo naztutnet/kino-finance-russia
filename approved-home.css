@@ -164,6 +164,41 @@ body.product-home .panel .cat-checks label,
 body.product-home .panel button.primary,
 body.product-home .panel button.ghost{font-weight:650!important}
 
+/* Selection results: one clean baseline, no pushpin decoration. */
+body.product-home .results-head:not([hidden]){
+  display:grid!important;
+  grid-template-columns:auto auto minmax(0,1fr)!important;
+  align-items:center!important;
+  justify-content:start!important;
+  column-gap:12px!important;
+  row-gap:8px!important;
+  margin:30px 0 14px!important;
+}
+body.product-home .results-head h2{
+  margin:0!important;
+  font-size:18px!important;
+  line-height:1.05!important;
+  white-space:nowrap!important;
+}
+body.product-home .results-head h2::before{content:none!important;display:none!important}
+body.product-home .results-head .count{
+  margin:0!important;
+  color:#666!important;
+  font-family:inherit!important;
+  font-size:11px!important;
+  line-height:1.2!important;
+  font-weight:600!important;
+  white-space:nowrap!important;
+}
+body.product-home .results-head .verification-legend{
+  flex:initial!important;
+  width:auto!important;
+  margin:0!important;
+  justify-content:flex-start!important;
+  align-items:center!important;
+  gap:7px!important;
+}
+
 @media(max-width:1180px){
  body.product-home .ed-main{grid-template-columns:1fr!important}
  body.product-home .ed-main>.product-home-main{grid-column:1;grid-row:auto}
@@ -270,6 +305,9 @@ body.product-home .panel button.ghost{font-weight:650!important}
   body.product-home .personal-update{font-size:10px!important}
 
   body.product-home .results-head{margin-top:24px!important}
+  body.product-home .results-head:not([hidden]){grid-template-columns:1fr auto!important;align-items:center!important;row-gap:8px!important}
+  body.product-home .results-head h2{font-size:18px!important;white-space:normal!important}
+  body.product-home .results-head .verification-legend{grid-column:1/-1!important;margin-top:0!important}
   body.product-home .results-grid{grid-template-columns:1fr!important}
   body.product-home .card>.mvp-card-tools{grid-template-columns:1fr!important}
   body.product-home .card>.mvp-card-tools .mvp-card-actions{display:grid!important;grid-template-columns:1fr!important;width:100%!important}
