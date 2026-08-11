@@ -192,6 +192,8 @@
       ['D','Ограничено / реструктурировано','Есть существенное ограничение, исправлена исходная трактовка или карточка реструктурирована.']
     ].map(([level,label,text]) => `<div class="home-verification-guide-item"><span class="verification-legend-item" data-level="${level}"><strong>${level}</strong>${esc(label)}</span><p>${esc(text)}</p></div>`).join('');
     aside.append(guide);
+    const storageNote = aside.querySelector('.personal-update');
+    if (storageNote) aside.append(storageNote);
   }
 
   function applyCatalogQueryFromUrl() {
