@@ -23,7 +23,7 @@
   }, true);
 
   function ensureStyles() {
-    for (const href of ['product.css?v=2026081106', 'product-home.css?v=2026081106', 'white-theme.css?v=2026081107', 'approved-home.css?v=2026081121']) {
+    for (const href of ['product.css?v=2026081106', 'product-home.css?v=2026081106', 'white-theme.css?v=2026081107', 'approved-home.css?v=2026081121', 'header-system.css?v=2026081101']) {
       if ([...document.styleSheets].some(s => s.href?.includes(href.split('?')[0]))) continue;
       const link = document.createElement('link');
       link.rel = 'stylesheet';
@@ -85,13 +85,13 @@
         <div class="wrap">
           <a class="ed-brand" href="index.html" aria-label="Кино-Финансирование.РФ — главная">
             <strong>КИНО-<br>ФИНАНСИРОВАНИЕ.РФ</strong>
-            <span>Справочник источников финансирования российского кино</span>
+            <span>Справочник источников финансирования российского и международного кино</span>
           </a>
           <nav class="tabs" aria-label="Основная навигация">
-            <a href="index.html" class="${active === 'home' ? 'active' : ''}"><span><b>01</b> / Подбор</span><small>найти программы</small></a>
-            <a href="istochniki.html" class="${active === 'sources' ? 'active' : ''}"><span><b>02</b> / Источники</span><small>весь каталог</small></a>
-            <a href="calendar.html" class="${active === 'calendar' ? 'active' : ''}"><span><b>03</b> / Дедлайны</span><small>календарь</small></a>
-            <a href="my-submissions.html" class="${active === 'submissions' ? 'active' : ''}"><span><b>04</b> / Мои подачи</span><small>мои проекты</small></a>
+            <a href="index.html" class="${active === 'home' ? 'active' : ''}"><span><b>01</b> / ПОДБОР</span><small>найти подходящее</small></a>
+            <a href="istochniki.html" class="${active === 'sources' ? 'active' : ''}"><span><b>02</b> / ИСТОЧНИКИ</span><small>весь каталог</small></a>
+            <a href="calendar.html" class="${active === 'calendar' ? 'active' : ''}"><span><b>03</b> / ДЕДЛАЙНЫ</span><small>календарь приёмов</small></a>
+            <a href="my-submissions.html" class="${active === 'submissions' ? 'active' : ''}"><span><b>04</b> / МОИ ПОДАЧИ</span><small>мои проекты</small></a>
           </nav>
         </div>`;
     } else {
