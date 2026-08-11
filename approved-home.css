@@ -146,6 +146,24 @@ body.product-home .key-sources-section .ed-section-head::after{content:'A — п
 body:not(.product-home) .results-head:has(+ .quicknav){flex-wrap:wrap;row-gap:7px}
 body:not(.product-home) .results-head:has(+ .quicknav)::after{content:'A — проверено · B — частично проверено · C — требует проверки';flex:0 0 100%;font-size:11px;line-height:1.4;color:#666;font-weight:500}
 
+/* Filter typography lock: same typeface and size across labels, fields, checkbox and actions. */
+body.product-home .panel .field label,
+body.product-home .panel .field select,
+body.product-home .panel .field input[type=text],
+body.product-home .panel .check-row label,
+body.product-home .panel .cat-checks label,
+body.product-home .panel button.primary,
+body.product-home .panel button.ghost{
+  font-family:inherit!important;
+  font-size:11px!important;
+  line-height:1.3!important;
+}
+body.product-home .panel .field label{font-weight:500!important}
+body.product-home .panel .check-row label,
+body.product-home .panel .cat-checks label,
+body.product-home .panel button.primary,
+body.product-home .panel button.ghost{font-weight:650!important}
+
 @media(max-width:1180px){
  body.product-home .ed-main{grid-template-columns:1fr!important}
  body.product-home .ed-main>.product-home-main{grid-column:1;grid-row:auto}
