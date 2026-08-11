@@ -140,6 +140,12 @@ body.product-home .home-open-row .open-level{width:25px!important;height:20px!im
 body.product-home .home-open-row .open-arrow{font-size:15px!important}
 body.product-home .home-open-empty{font-size:10.5px!important}
 
+/* Verification legend */
+body.product-home .key-sources-section .ed-section-head{flex-wrap:wrap!important;row-gap:7px!important}
+body.product-home .key-sources-section .ed-section-head::after{content:'A — проверено · B — частично проверено · C — требует проверки';flex:0 0 100%;font-size:9.5px;line-height:1.35;color:#6b6b68;font-weight:500;letter-spacing:0}
+body:not(.product-home) .results-head:has(+ .quicknav){flex-wrap:wrap;row-gap:7px}
+body:not(.product-home) .results-head:has(+ .quicknav)::after{content:'A — проверено · B — частично проверено · C — требует проверки';flex:0 0 100%;font-size:11px;line-height:1.4;color:#666;font-weight:500}
+
 @media(max-width:1180px){
  body.product-home .ed-main{grid-template-columns:1fr!important}
  body.product-home .ed-main>.product-home-main{grid-column:1;grid-row:auto}
