@@ -27,6 +27,16 @@
       .verification-level-badge[data-level="C"]{background:#fff0ed}
       .verification-level-badge[data-level="D"]{background:#ececec}
 
+      body.product-home .key-sources-section .ed-section-head::after,
+      body:not(.product-home) .results-head:has(+ .quicknav)::after{content:none!important;display:none!important}
+      .verification-legend{display:flex;flex:0 0 100%;flex-wrap:wrap;align-items:center;gap:7px;margin:7px 0 0;font-size:11.5px;line-height:1.25;font-weight:650;color:#222}
+      .verification-legend-item{display:inline-flex;align-items:center;gap:5px;min-height:27px;padding:5px 9px;border:1px solid transparent;border-radius:999px;white-space:nowrap}
+      .verification-legend-item strong{font-size:11px;font-weight:850}
+      .verification-legend-item[data-level="A"]{background:#edf8ef;border-color:#a8d9b1;color:#26783a}
+      .verification-legend-item[data-level="B"]{background:#fff3d7;border-color:#e5c978;color:#8b6512}
+      .verification-legend-item[data-level="C"]{background:#fff0ed;border-color:#e9b4ab;color:#a53d30}
+      .verification-legend-item[data-level="D"]{background:#eeeeec;border-color:#c9c9c4;color:#50504d}
+
       body.product-home .ed-section.key-sources-section{padding-top:25px!important}
       body.product-home .ed-section.key-sources-section .ed-section-head{margin-bottom:13px!important}
       body.product-home .ed-section.key-sources-section .ed-open-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;margin-bottom:0!important}
@@ -59,6 +69,8 @@
       }
       @media(max-width:640px){
         .verification-level-badge{align-items:flex-start;flex-direction:column;gap:3px}
+        .verification-legend{gap:5px;font-size:10.5px}
+        .verification-legend-item{padding:5px 8px}
         body.product-home .ed-section.key-sources-section .ed-open-grid{grid-template-columns:1fr!important}
         .key-source-card{min-height:160px}
       }
@@ -95,6 +107,33 @@
 
   function verificationLevel(item) {
     return item.verification_level || (item.verification_status === 'official' ? 'A' : 'C');
+  }
+
+  function renderVerificationLegend() {
+    const homeHead = document.querySelector('body.product-home .key-sources-section .ed-section-head');
+    const catalogHead = document.querySelector('body:not(.product-home) .results-head');
+    const host = homeHead || catalogHead;
+    if (!host || host.querySelector('.verification-legend')) return;
+    const legend = document.createElement('div');
+    legend.className = 'verification-legend';
+    legend.setAttribute('aria-label', 'Уровни проверки данных');
+    legend.innerHTML = [
+      ['A','Проверено'],
+      ['B','Частично проверено'],
+      ['C','Требует проверки'],
+      ['D','Ограничено / реструктурировано']
+    ].map(([level,label]) => `<span class="verification-legend-item" data-level="${level}" title="${esc(LABELS[level][1])}"><strong>${level}</strong>${esc(label)}</span>`).join('');
+    host.append(legend);
+  }
+
+  function applyCatalogQueryFromUrl() {
+    if ((location.pathname.split('/').pop() || '') !== 'istochniki.html') return;
+    const value = new URLSearchParams(location.search).get('query');
+    const input = document.getElementById('f-query');
+    if (!input || !value || input.dataset.queryApplied === value) return;
+    input.value = value;
+    input.dataset.queryApplied = value;
+    input.dispatchEvent(new Event('input', {bubbles:true}));
   }
 
   function deadlineDate(text) {
@@ -134,6 +173,7 @@
     const allLink = section.querySelector('.ed-section-head a');
     if (title) title.textContent = 'Ключевые источники';
     if (allLink) { allLink.textContent = 'Весь каталог →'; allLink.href = 'istochniki.html'; }
+    renderVerificationLegend();
 
     const keySources = [
       {
@@ -218,8 +258,10 @@
     });
     scan();
     renderHomeVariant(items);
-    setTimeout(() => renderHomeVariant(items), 350);
-    setTimeout(() => renderHomeVariant(items), 1000);
+    renderVerificationLegend();
+    applyCatalogQueryFromUrl();
+    setTimeout(() => { renderHomeVariant(items); renderVerificationLegend(); applyCatalogQueryFromUrl(); }, 350);
+    setTimeout(() => { renderHomeVariant(items); renderVerificationLegend(); applyCatalogQueryFromUrl(); }, 1000);
     const observer = new MutationObserver(records => records.forEach(r => r.addedNodes.forEach(node => {
       if (node.nodeType === Node.ELEMENT_NODE) scan(node);
     })));
