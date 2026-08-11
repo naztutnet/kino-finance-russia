@@ -163,6 +163,11 @@
   }
 
   function renderVerificationLegend() {
+    const catalogRoot = document.getElementById('catalog-root');
+    if (!catalogRoot) {
+      document.querySelector('.results-head .catalog-verification-guide')?.remove();
+      return;
+    }
     const catalogHead = document.querySelector('body:not(.product-home) .results-head');
     if (!catalogHead || catalogHead.querySelector('.verification-legend')) return;
     const guide = document.createElement('div');
