@@ -204,32 +204,6 @@
     input.dispatchEvent(new Event('input', {bubbles:true}));
   }
 
-  function deadlineDate(text) {
-    const value = String(text || '').toLowerCase().replace(/ё/g,'е');
-    const names = Object.keys(MONTHS).join('|');
-    const re = new RegExp(`(\\d{1,2})(?:\\s*[–—-]\\s*(\\d{1,2}))?\\s+(${names})(?:\\s+(20\\d{2}))?`, 'g');
-    const found = [...value.matchAll(re)];
-    if (!found.length) return null;
-    const m = found.at(-1);
-    const year = Number(m[4] || new Date().getFullYear());
-    const date = new Date(year, MONTHS[m[3]], Number(m[2] || m[1]), 23, 59, 59);
-    return Number.isNaN(date.getTime()) ? null : date;
-  }
-
-  function isOpenNow(item) {
-    const level = verificationLevel(item);
-    if (level !== 'A' && level !== 'B') return false;
-    const text = norm(`${item.status || ''} ${item.deadline_text || ''}`);
-    if (/(заверш|закрыт|результат|не объявлен|не подтвержден|архив|состоялся|приостанов)/i.test(text)) return false;
-    const date = deadlineDate(item.deadline_text);
-    if (!date || date < new Date()) return false;
-    return /(открыт|прием|приём|до \d|дедлайн)/i.test(text) || Boolean(date);
-  }
-
-  function shortDate(date) {
-    return new Intl.DateTimeFormat('ru-RU', {day:'numeric', month:'short'}).format(date).replace('.', '');
-  }
-
   function renderHomeVariant(items) {
     if ((location.pathname.split('/').pop() || 'index.html') !== 'index.html') return;
     const section = document.querySelector('.ed-section');
@@ -286,29 +260,6 @@
 
     section.querySelector('.home-open-now')?.remove();
     section.querySelector('.home-verification-guide')?.remove();
-    const open = items
-      .filter(isOpenNow)
-      .map(item => ({item, date: deadlineDate(item.deadline_text)}))
-      .filter(x => x.date)
-      .sort((a,b) => a.date - b.date || verificationLevel(a.item).localeCompare(verificationLevel(b.item)))
-      .slice(0,5);
-
-    const block = document.createElement('div');
-    block.className = 'home-open-now';
-    block.innerHTML = `
-      <div class="home-open-now-head"><h3>Открыто сейчас</h3><a href="calendar.html">Все дедлайны →</a></div>
-      ${open.length ? open.map(({item,date}) => {
-        const level = verificationLevel(item);
-        const href = /^https?:\/\//i.test(item.link || '') ? item.link : `istochniki.html?query=${encodeURIComponent(item.org || item.title || '')}`;
-        return `<a class="home-open-row" href="${esc(href)}" ${href.startsWith('http') ? 'target="_blank" rel="noopener"' : ''}>
-          <span class="open-date">${esc(shortDate(date))}</span>
-          <strong>${esc(item.org || item.title)}</strong>
-          <span class="open-program">${esc(item.program || item.what_for || 'Приём заявок')}</span>
-          <span class="open-level" data-level="${esc(level)}">${esc(level)}</span>
-          <span class="open-arrow">→</span>
-        </a>`;
-      }).join('') : '<div class="home-open-empty">Сейчас нет подтверждённых открытых приёмов с фиксированным дедлайном.</div>'}`;
-    grid.insertAdjacentElement('afterend', block);
     renderHomeVerificationGuide(section);
   }
 

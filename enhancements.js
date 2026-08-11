@@ -23,7 +23,7 @@
   }, true);
 
   function ensureStyles() {
-    for (const href of ['product.css?v=2026081106', 'product-home.css?v=2026081106', 'white-theme.css?v=2026081107', 'approved-home.css?v=2026081120']) {
+    for (const href of ['product.css?v=2026081106', 'product-home.css?v=2026081106', 'white-theme.css?v=2026081107', 'approved-home.css?v=2026081121']) {
       if ([...document.styleSheets].some(s => s.href?.includes(href.split('?')[0]))) continue;
       const link = document.createElement('link');
       link.rel = 'stylesheet';
@@ -181,7 +181,7 @@
   }
 
   function dateCandidates(item) {
-    const text = `${item.deadline_text || ''} ${item.defense_date || ''} ${item.results_date || ''}`;
+    const text = item.deadline_text || '';
     const monthMap = {января:0,февраля:1,марта:2,апреля:3,мая:4,июня:5,июля:6,августа:7,сентября:8,октября:9,ноября:10,декабря:11};
     const re = /(\d{1,2})\s+(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)(?:\s+(20\d{2}))?/giu;
     const now = new Date();
@@ -191,7 +191,11 @@
   function deadlineCandidates() {
     const now = new Date();
     const seen = new Set();
-    return allItems.map(item => {
+    return allItems.filter(item => {
+      const level = item.verification_level || (item.verification_status === 'official' ? 'A' : 'C');
+      const state = `${item.status || ''} ${item.deadline_text || ''}`.toLowerCase();
+      return (level === 'A' || level === 'B') && !/(заверш|закрыт|результат|архив|состоялся|приостанов)/i.test(state);
+    }).map(item => {
       const date = dateCandidates(item)[0];
       return date ? { item, date, days: Math.max(0, Math.ceil((date - now) / 86400000)) } : null;
     }).filter(Boolean).sort((a,b) => a.date - b.date).filter(entry => {
@@ -199,7 +203,7 @@
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
-    }).slice(0,4);
+    }).slice(0,5);
   }
 
   function makeDeadlineSection() {
@@ -212,7 +216,9 @@
         const item = entry.item;
         const date = new Intl.DateTimeFormat('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'}).format(entry.date);
         const urgent = entry.days <= 7;
-        return `<a class="home-deadline-row" href="calendar.html" style="text-decoration:none;color:inherit"><strong>${escapeHtml(date)}</strong><strong>${escapeHtml(item.org || item.title || 'Источник')}</strong><span class="muted">${escapeHtml(item.program || item.what_for || 'Приём заявок')}</span><span class="${urgent ? 'urgent' : 'muted'}">${urgent ? `Осталось ${entry.days} дн.` : `${entry.days} дней`}</span><span class="arrow">→</span></a>`;
+        const level = item.verification_level || (item.verification_status === 'official' ? 'A' : 'C');
+        const href = /^https?:\/\//i.test(item.link || '') ? item.link : 'calendar.html';
+        return `<a class="home-deadline-row" href="${escapeHtml(href)}" ${href.startsWith('http') ? 'target="_blank" rel="noopener"' : ''} style="text-decoration:none;color:inherit"><strong>${escapeHtml(date)}</strong><strong>${escapeHtml(item.org || item.title || 'Источник')}</strong><span class="muted">${escapeHtml(item.program || item.what_for || 'Приём заявок')}</span><span class="${urgent ? 'urgent' : 'muted'}">${urgent ? `Осталось ${entry.days} дн.` : `${entry.days} дней`}</span><span class="deadline-level" data-level="${escapeHtml(level)}" title="Уровень проверки ${escapeHtml(level)}">${escapeHtml(level)}</span><span class="arrow">→</span></a>`;
       }).join('') : '<div class="home-deadline-row"><span class="muted">Нет подтверждённых ближайших дат</span></div>'}`;
     return section;
   }
