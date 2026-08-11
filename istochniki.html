@@ -10,12 +10,50 @@
 <link rel="stylesheet" href="style.css?v=202608071200">
 <link rel="stylesheet" href="horizontal.css?v=202608071200">
 <link rel="stylesheet" href="mvp.css?v=202608071200">
+<style>
+/* Catalog precision pass: consistent controls, typography and cleaner heading. */
+body.catalog-page .results-head h2::before{content:none!important;display:none!important}
+body.catalog-page .panel .grid-filters{align-items:stretch!important}
+body.catalog-page .panel .field{min-width:0}
+body.catalog-page .panel .field input[type=text],
+body.catalog-page .panel .field select{
+  width:100%!important;
+  height:44px!important;
+  min-height:44px!important;
+  box-sizing:border-box!important;
+  padding:0 12px!important;
+  font-family:inherit!important;
+  font-size:11px!important;
+  line-height:1.2!important;
+}
+body.catalog-page .panel .actions{align-items:center!important;gap:10px!important}
+body.catalog-page .panel .mvp-open-filter,
+body.catalog-page .panel #reset-btn{
+  min-height:44px!important;
+  height:44px!important;
+  box-sizing:border-box!important;
+  padding:0 14px!important;
+  font-family:inherit!important;
+  font-size:11px!important;
+  line-height:1.2!important;
+  font-weight:650!important;
+}
+body.catalog-page .verification-legend-item{cursor:pointer;user-select:none;transition:border-color .14s ease,box-shadow .14s ease,transform .14s ease}
+body.catalog-page .verification-legend-item:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.05)}
+body.catalog-page .verification-legend-item.is-active{box-shadow:0 0 0 2px #111 inset!important}
+@media(max-width:680px){
+  body.catalog-page .panel .field input[type=text],
+  body.catalog-page .panel .field select{font-size:16px!important;height:48px!important;min-height:48px!important}
+  body.catalog-page .panel .mvp-open-filter,
+  body.catalog-page .panel #reset-btn{height:48px!important;min-height:48px!important;font-size:13px!important}
+}
+</style>
 <script src="enhancements.js?v=202608071200" defer></script>
 <script src="mvp.js?v=202608071200" defer></script>
 <script src="requirements.js?v=202608071200" defer></script>
 <script src="verification-levels.js?v=2026081102" defer></script>
 </head>
-<body>
+<body class="catalog-page">
 <header class="site">
   <div class="wrap">
     <div class="eyebrow">Справочник продюсера · Россия + международные программы · 2026</div>
@@ -53,6 +91,9 @@
         <select id="f-verification">
           <option value="all">Показать всё</option>
           <option value="A">Только A — проверенные</option>
+          <option value="B">Только B — частично проверенные</option>
+          <option value="C">Только C — требуют проверки</option>
+          <option value="D">Только D — ограниченные / реструктурированные</option>
           <option value="AB">A+B — проверенные и частично</option>
         </select>
       </div>
@@ -72,7 +113,11 @@ let ITEMS=[],BLOCKS=[];
 const CAT_SEAL={gov:'ГОС',priv:'ЧАСТ',reg:'РЕГ',pitch:'ПИТЧ',grant:'ГРАНТ',intl:'МЕЖД'};
 const BASIS_LABELS={prize:'приз / премия конкурса',stipend:'личная стипендия автору',pool_total:'общий пул региона/года',non_monetary:'нефинансовая поддержка',pathway:'преимущество в другом конкурсе',fund_unknown:'лимит на проект не раскрыт',unclear:'сумма не указана'};
 function verificationLevel(i){return i.verification_level||(i.verification_status==='official'?'A':'C');}
-function verificationPass(level,mode){if(mode==='A')return level==='A';if(mode==='AB')return level==='A'||level==='B';return true;}
+function verificationPass(level,mode){
+  if(['A','B','C','D'].includes(mode))return level===mode;
+  if(mode==='AB')return level==='A'||level==='B';
+  return true;
+}
 function linkify(v){return v&&/^https?:\/\//i.test(v)?`<a href="${v}" target="_blank" rel="noopener">Официальный источник</a>`:v||'';}
 function card(i){
   const rows=[];const add=(k,v)=>{if(v)rows.push(`<div class="row"><div class="k">${k}</div><div class="v">${v}</div></div>`);};
@@ -87,6 +132,10 @@ function renderAll(){
   document.getElementById('quicknav').innerHTML=BLOCKS.map(b=>`<a href="#block-${b.num}">${b.num}. ${b.title} (${ITEMS.filter(i=>i.block===b.num).length})</a>`).join('');
   document.getElementById('catalog-root').innerHTML=BLOCKS.map(b=>{const items=ITEMS.filter(i=>i.block===b.num);return `<div class="block-heading" id="block-${b.num}"><div class="num">${String(b.num).padStart(2,'0')}</div><h2>${b.title}</h2></div><div class="block-count">${items.length} источник(ов)</div><div class="results-grid" data-block="${b.num}">${items.map(card).join('')}</div>`;}).join('');
 }
+function syncVerificationLegend(){
+  const verification=document.getElementById('f-verification')?.value||'all';
+  document.querySelectorAll('.verification-legend-item').forEach(chip=>chip.classList.toggle('is-active',verification!=='all'&&chip.dataset.level===verification));
+}
 function apply(){
   const q=document.getElementById('f-query').value.trim().toLowerCase();
   const cats=[...document.querySelectorAll('.cat-checks input:checked')].map(x=>x.value);
@@ -97,8 +146,9 @@ function apply(){
     c.style.display=show?'':'none';if(show)n++;
   });
   document.querySelectorAll('[data-block]').forEach(g=>{const show=[...g.querySelectorAll('.card')].some(c=>c.style.display!=='none');g.style.display=show?'':'none';g.previousElementSibling.style.display=show?'':'none';g.previousElementSibling.previousElementSibling.style.display=show?'':'none';});
-  const modeLabel=verification==='A'?' · только A':verification==='AB'?' · A+B':'';
+  const modeLabel=verification==='all'?'':verification==='AB'?' · A+B':` · только ${verification}`;
   document.getElementById('results-count').textContent=`Показано: ${n} из ${ITEMS.length}${modeLabel}`;
+  syncVerificationLegend();
 }
 async function boot(){
   const files=Array.from({length:10},(_,i)=>`./data-${String(i).padStart(2,'0')}.json`);const parts=await Promise.all(files.map(async f=>{const r=await fetch(f,{cache:'no-store'});return r.json();}));ITEMS=parts.flatMap(p=>p.items||[]);
@@ -107,6 +157,17 @@ async function boot(){
   document.getElementById('f-verification').addEventListener('change',apply);
   document.querySelectorAll('.cat-checks input').forEach(x=>x.addEventListener('change',apply));
   document.getElementById('reset-btn').addEventListener('click',()=>{document.getElementById('f-query').value='';document.getElementById('f-verification').value='all';document.querySelectorAll('.cat-checks input').forEach(x=>x.checked=true);apply();});
+  document.addEventListener('click',event=>{
+    const chip=event.target.closest('.verification-legend-item');
+    if(!chip||!document.querySelector('.results-head')?.contains(chip))return;
+    const select=document.getElementById('f-verification');
+    if(!select)return;
+    const level=chip.dataset.level;
+    select.value=select.value===level?'all':level;
+    apply();
+  });
+  const observer=new MutationObserver(()=>syncVerificationLegend());
+  observer.observe(document.body,{childList:true,subtree:true});
 }
 document.addEventListener('DOMContentLoaded',boot);
 </script>
