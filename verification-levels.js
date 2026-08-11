@@ -56,6 +56,11 @@
       .verification-legend-item[data-level="C"]{background:#fff0ed;border-color:#e9b4ab;color:#a53d30}
       .verification-legend-item[data-level="D"]{background:#eeeeec;border-color:#c9c9c4;color:#50504d}
 
+      .home-verification-guide{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0 0}
+      .home-verification-guide-item{min-width:0;padding:10px 11px;border:1px solid #e4e4df;border-radius:11px;background:#fafaf8}
+      .home-verification-guide-item .verification-legend-item{display:inline-flex;margin:0 0 7px;font-size:10px;min-height:25px;padding:4px 8px}
+      .home-verification-guide-item p{margin:0;color:#666;font-size:9.5px;line-height:1.38}
+
       body.product-home .ed-section.key-sources-section{padding-top:25px!important}
       body.product-home .ed-section.key-sources-section .ed-section-head{margin-bottom:13px!important}
       body.product-home .ed-section.key-sources-section .ed-open-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;margin-bottom:0!important}
@@ -85,6 +90,7 @@
 
       @media(max-width:820px){
         body.product-home .ed-section.key-sources-section .ed-open-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+        .home-verification-guide{grid-template-columns:repeat(2,minmax(0,1fr))}
         .home-open-row{grid-template-columns:70px 1fr 28px 18px}.home-open-row .open-program{display:none}
       }
       @media(max-width:640px){
@@ -92,6 +98,9 @@
         .card .cat-bar .verification-level-badge{align-items:center;flex-direction:row}
         .verification-legend{gap:5px;font-size:10.5px}
         .verification-legend-item{padding:5px 8px}
+        .home-verification-guide{grid-template-columns:1fr}
+        .home-verification-guide-item{padding:10px 11px}
+        .home-verification-guide-item p{font-size:10px}
         body.product-home .ed-section.key-sources-section .ed-open-grid{grid-template-columns:1fr!important}
         .key-source-card{min-height:160px}
         .fund-logo{width:22px;height:22px}
@@ -145,10 +154,8 @@
   }
 
   function renderVerificationLegend() {
-    const homeHead = document.querySelector('body.product-home .key-sources-section .ed-section-head');
     const catalogHead = document.querySelector('body:not(.product-home) .results-head');
-    const host = homeHead || catalogHead;
-    if (!host || host.querySelector('.verification-legend')) return;
+    if (!catalogHead || catalogHead.querySelector('.verification-legend')) return;
     const legend = document.createElement('div');
     legend.className = 'verification-legend';
     legend.setAttribute('aria-label', 'Уровни проверки данных');
@@ -158,7 +165,21 @@
       ['C','Требует проверки'],
       ['D','Ограничено / реструктурировано']
     ].map(([level,label]) => `<span class="verification-legend-item" data-level="${level}" title="${esc(LABELS[level][1])}"><strong>${level}</strong>${esc(label)}</span>`).join('');
-    host.append(legend);
+    catalogHead.append(legend);
+  }
+
+  function renderHomeVerificationGuide(section, grid) {
+    section.querySelector('.home-verification-guide')?.remove();
+    const guide = document.createElement('div');
+    guide.className = 'home-verification-guide';
+    guide.setAttribute('aria-label', 'Что означают статусы проверки данных');
+    guide.innerHTML = [
+      ['A','Проверено','Программа и ключевые данные подтверждены первичным официальным источником.'],
+      ['B','Частично проверено','Программа подтверждена, но отдельные параметры ещё требуют проверки.'],
+      ['C','Требует проверки','Часть заявленных условий пока не подтверждена первичным официальным источником.'],
+      ['D','Ограничено / реструктурировано','Есть существенное ограничение, исправлена исходная трактовка или карточка реструктурирована.']
+    ].map(([level,label,text]) => `<div class="home-verification-guide-item"><span class="verification-legend-item" data-level="${level}"><strong>${level}</strong>${esc(label)}</span><p>${esc(text)}</p></div>`).join('');
+    grid.insertAdjacentElement('afterend', guide);
   }
 
   function applyCatalogQueryFromUrl() {
@@ -208,7 +229,7 @@
     const allLink = section.querySelector('.ed-section-head a');
     if (title) title.textContent = 'Ключевые источники';
     if (allLink) { allLink.textContent = 'Весь каталог →'; allLink.href = 'istochniki.html'; }
-    renderVerificationLegend();
+    section.querySelector('.ed-section-head .verification-legend')?.remove();
 
     const keySources = [
       {
@@ -252,6 +273,7 @@
       </a>`).join('');
 
     section.querySelector('.home-open-now')?.remove();
+    section.querySelector('.home-verification-guide')?.remove();
     const open = items
       .filter(isOpenNow)
       .map(item => ({item, date: deadlineDate(item.deadline_text)}))
@@ -275,6 +297,7 @@
         </a>`;
       }).join('') : '<div class="home-open-empty">Сейчас нет подтверждённых открытых приёмов с фиксированным дедлайном.</div>'}`;
     grid.insertAdjacentElement('afterend', block);
+    renderHomeVerificationGuide(section, grid);
   }
 
   async function load() {
