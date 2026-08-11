@@ -35,8 +35,8 @@
     "organizer": "EAVE",
     "title": "Producers Workshop 2027",
     "note": "Программа и дедлайн подтверждены. Участие конкретного российского заявителя требует отдельной проверки eligibility.",
-    "apply": "https://eave.org/",
-    "source": "https://eave.org/"
+    "apply": "https://eave.org/apply/epw-2027",
+    "source": "https://eave.org/programmes/eave-producers-workshop-2027"
   },
   {
     "year": 2027,
@@ -114,6 +114,18 @@
     "note": "Максимальная сумма гранта — до 1,5 млн руб. Программа не является специализированным кинофондом.",
     "apply": "https://tavrida.art/grants/grant-support",
     "source": "https://tavrida.art/grants/grant-support"
+  },
+  {
+    "year": 2026,
+    "date": "30.09.2026",
+    "date_iso": "2026-09-30",
+    "kind": "Подача",
+    "status": "wait",
+    "statusText": "Приём 1–30 сентября 2026",
+    "organizer": "Кинокомиссия Красноярского края",
+    "title": "Второй этап рибейта 2026",
+    "note": "Второй этап конкурсного отбора официально запланирован на 1–30 сентября 2026 года. 50 млн руб. — общий объём субсидии первого этапа, не лимит одной заявки.",
+    "source": "https://filmcommission.ru/grants/ribejty"
   },
   {
     "year": 2027,
