@@ -351,10 +351,10 @@ body.product-home .personal-update{font-size:11px!important;line-height:1.45!imp
 body.product-home .key-source-card .key-source-badge{
   display:grid!important;
   place-items:center!important;
-  width:28px!important;
-  min-width:28px!important;
-  height:28px!important;
-  min-height:28px!important;
+  width:22px!important;
+  min-width:22px!important;
+  height:22px!important;
+  min-height:22px!important;
   padding:0!important;
   border-radius:50%!important;
   font-size:0!important;
@@ -363,11 +363,17 @@ body.product-home .key-source-card .key-source-badge{
 }
 body.product-home .key-source-card .key-source-badge::after{
   content:'A';
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   font-family:inherit;
-  font-size:11px;
+  font-size:10px;
   font-weight:900;
   line-height:1;
   letter-spacing:0;
+  transform:translateY(-.5px);
 }
 body.product-home .key-source-link{font-size:11px!important;line-height:1.35!important}
 body.product-home .home-open-row .open-level{font-size:10px!important}
