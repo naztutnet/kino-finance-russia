@@ -1,0 +1,60 @@
+/* Restrained motion system for navigation and interface feedback. */
+@view-transition{navigation:auto}
+
+header.site{view-transition-name:site-header}
+
+::view-transition-old(root){
+  animation:page-out 130ms cubic-bezier(.4,0,1,1) both;
+}
+::view-transition-new(root){
+  animation:page-in 210ms cubic-bezier(.2,.8,.2,1) both;
+}
+::view-transition-old(site-header),
+::view-transition-new(site-header){
+  animation-duration:150ms;
+  animation-timing-function:ease-out;
+}
+
+@keyframes page-out{
+  to{opacity:0;transform:translateY(-2px)}
+}
+@keyframes page-in{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:none}
+}
+@keyframes content-reveal{
+  from{opacity:0;transform:translateY(5px)}
+  to{opacity:1;transform:none}
+}
+
+a,
+button,
+select,
+input,
+.card,
+.key-source-card,
+.deadline-card,
+.workspace-card,
+.personal-card{
+  transition-property:color,background-color,border-color,box-shadow,opacity,transform;
+  transition-duration:160ms;
+  transition-timing-function:ease-out;
+}
+
+button:active,
+.workspace-btn:active,
+.personal-action:active{transform:translateY(1px)}
+
+#results-head:not([hidden]),
+#results-grid:not([hidden]){animation:content-reveal 220ms cubic-bezier(.2,.8,.2,1) both}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  @view-transition{navigation:none}
+  *,*::before,*::after{
+    scroll-behavior:auto!important;
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+  }
+}
