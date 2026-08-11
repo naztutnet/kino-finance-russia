@@ -13,8 +13,14 @@
 <style>
 /* Catalog precision pass: consistent controls, typography and cleaner heading. */
 body.catalog-page .results-head h2::before{content:none!important;display:none!important}
-body.catalog-page .panel .grid-filters{align-items:stretch!important}
-body.catalog-page .panel .field{min-width:0}
+body.catalog-page .panel{padding:22px!important}
+body.catalog-page .panel h2{margin-bottom:16px!important}
+body.catalog-page .catalog-filter-layout{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(420px,.92fr);gap:28px;align-items:start}
+body.catalog-page .catalog-filter-categories,
+body.catalog-page .catalog-filter-controls .field{min-width:0;padding:0!important;background:transparent!important}
+body.catalog-page .catalog-filter-categories>label,
+body.catalog-page .catalog-filter-controls .field>label{margin-bottom:7px!important;font-family:inherit!important;font-size:10.5px!important;line-height:1.2!important;font-weight:600!important;letter-spacing:0!important;text-transform:none!important;color:#666!important}
+body.catalog-page .catalog-filter-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
 body.catalog-page .panel .field input[type=text],
 body.catalog-page .panel .field select{
   width:100%!important;
@@ -25,8 +31,11 @@ body.catalog-page .panel .field select{
   font-family:inherit!important;
   font-size:11px!important;
   line-height:1.2!important;
+  border-radius:9px!important;
 }
-body.catalog-page .panel .actions{align-items:center!important;gap:10px!important}
+body.catalog-page .catalog-filter-categories .cat-checks{gap:8px!important;align-content:start}
+body.catalog-page .catalog-filter-categories .cat-checks label{min-height:31px!important;padding:6px 10px!important;font-family:inherit!important;font-size:10.5px!important;line-height:1.15!important;font-weight:600!important}
+body.catalog-page .panel .actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:10px!important;margin-top:14px!important;min-height:44px!important}
 body.catalog-page .panel .mvp-open-filter,
 body.catalog-page .panel #reset-btn{
   min-height:44px!important;
@@ -37,15 +46,32 @@ body.catalog-page .panel #reset-btn{
   font-size:11px!important;
   line-height:1.2!important;
   font-weight:650!important;
+  border-radius:9px!important;
+  white-space:nowrap!important;
 }
+body.catalog-page .panel .mvp-open-filter{margin:0!important}
+body.catalog-page .results-head{margin-top:28px!important;margin-bottom:10px!important}
+body.catalog-page .results-head h2{font-size:20px!important;line-height:1.15!important}
+body.catalog-page .results-head .count{font-family:inherit!important;font-size:11px!important;line-height:1.2!important;font-weight:600!important;color:#666!important}
+body.catalog-page .verification-legend{margin-top:9px!important}
 body.catalog-page .verification-legend-item{cursor:pointer;user-select:none;transition:border-color .14s ease,box-shadow .14s ease,transform .14s ease}
 body.catalog-page .verification-legend-item:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.05)}
 body.catalog-page .verification-legend-item.is-active{box-shadow:0 0 0 2px #111 inset!important}
+body.catalog-page .quicknav{margin-top:2px!important}
+@media(max-width:980px){
+  body.catalog-page .catalog-filter-layout{grid-template-columns:1fr!important;gap:18px!important}
+  body.catalog-page .catalog-filter-fields{grid-template-columns:1fr 1fr!important}
+  body.catalog-page .panel .actions{justify-content:flex-start!important}
+}
 @media(max-width:680px){
+  body.catalog-page .panel{padding:16px!important}
+  body.catalog-page .catalog-filter-fields{grid-template-columns:1fr!important;gap:12px!important}
   body.catalog-page .panel .field input[type=text],
   body.catalog-page .panel .field select{font-size:16px!important;height:48px!important;min-height:48px!important}
+  body.catalog-page .panel .actions{display:grid!important;grid-template-columns:1fr!important;gap:9px!important}
   body.catalog-page .panel .mvp-open-filter,
-  body.catalog-page .panel #reset-btn{height:48px!important;min-height:48px!important;font-size:13px!important}
+  body.catalog-page .panel #reset-btn{width:100%!important;height:48px!important;min-height:48px!important;font-size:13px!important}
+  body.catalog-page .results-head{align-items:flex-start!important}
 }
 </style>
 <script src="enhancements.js?v=202608071200" defer></script>
@@ -70,8 +96,8 @@ body.catalog-page .verification-legend-item.is-active{box-shadow:0 0 0 2px #111 
 <div class="wrap">
   <div class="panel">
     <h2>Поиск и фильтр</h2>
-    <div class="grid-filters">
-      <div class="field" style="grid-column:span 2;">
+    <div class="catalog-filter-layout">
+      <div class="field catalog-filter-categories">
         <label>Категории источников</label>
         <div class="cat-checks">
           <label><input type="checkbox" value="gov" checked> Государственный</label>
@@ -82,23 +108,27 @@ body.catalog-page .verification-legend-item.is-active{box-shadow:0 0 0 2px #111 
           <label><input type="checkbox" value="intl" checked> Международный</label>
         </div>
       </div>
-      <div class="field">
-        <label for="f-query">Поиск по названию</label>
-        <input type="text" id="f-query" placeholder="например, Фонд кино">
-      </div>
-      <div class="field">
-        <label for="f-verification">Достоверность</label>
-        <select id="f-verification">
-          <option value="all">Показать всё</option>
-          <option value="A">Только A — проверенные</option>
-          <option value="B">Только B — частично проверенные</option>
-          <option value="C">Только C — требуют проверки</option>
-          <option value="D">Только D — ограниченные / реструктурированные</option>
-          <option value="AB">A+B — проверенные и частично</option>
-        </select>
+      <div class="catalog-filter-controls">
+        <div class="catalog-filter-fields">
+          <div class="field">
+            <label for="f-query">Поиск по названию</label>
+            <input type="text" id="f-query" placeholder="например, Фонд кино">
+          </div>
+          <div class="field">
+            <label for="f-verification">Достоверность</label>
+            <select id="f-verification">
+              <option value="all">Показать всё</option>
+              <option value="A">Только A — проверенные</option>
+              <option value="B">Только B — частично проверенные</option>
+              <option value="C">Только C — требуют проверки</option>
+              <option value="D">Только D — ограниченные / реструктурированные</option>
+              <option value="AB">A+B — проверенные и частично</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions"><button class="ghost" id="reset-btn">Сбросить фильтры</button></div>
       </div>
     </div>
-    <div class="actions"><button class="ghost" id="reset-btn">Сбросить фильтры</button></div>
   </div>
 
   <div class="results-head"><h2>Каталог</h2><div class="count" id="results-count">—</div></div>
