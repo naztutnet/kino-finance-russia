@@ -1,6 +1,6 @@
 /* Shared masthead typography and layout for every site section. */
 header.site>.wrap{
-  min-height:100px!important;
+  min-height:108px!important;
   max-width:1500px!important;
   margin:0 auto!important;
   padding:0 38px!important;
@@ -44,7 +44,7 @@ header.site nav.tabs{
 header.site nav.tabs a{
   position:relative!important;
   display:flex!important;
-  min-height:100px!important;
+  min-height:108px!important;
   padding:0!important;
   flex-direction:column!important;
   align-items:flex-start!important;
