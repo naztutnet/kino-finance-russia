@@ -56,6 +56,11 @@
       .verification-legend-item[data-level="C"]{background:#fff0ed;border-color:#e9b4ab;color:#a53d30}
       .verification-legend-item[data-level="D"]{background:#eeeeec;border-color:#c9c9c4;color:#50504d}
 
+      body:not(.product-home) .catalog-verification-guide{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:100%;margin:10px 0 0}
+      body:not(.product-home) .catalog-verification-guide-item{min-width:0;padding:10px 11px;border:1px solid #e4e4df;border-radius:11px;background:#fafaf8;font-weight:400}
+      body:not(.product-home) .catalog-verification-guide-item .verification-legend-item{display:inline-flex;margin:0 0 7px;font-size:10px;min-height:25px;padding:4px 8px;cursor:pointer}
+      body:not(.product-home) .catalog-verification-guide-item p{margin:0;color:#666;font-size:9.5px;line-height:1.38;font-weight:400}
+
       body.product-home .home-personal .home-verification-guide{display:grid;grid-template-columns:1fr;gap:8px;width:100%;margin:0}
       body.product-home .home-personal .home-verification-guide-item{min-width:0;padding:11px 12px;border:1px solid #e4e4df;border-radius:12px;background:#fafaf8}
       body.product-home .home-personal .home-verification-guide-item .verification-legend-item{display:inline-flex;margin:0 0 7px;font-size:10px;min-height:25px;padding:4px 8px}
@@ -89,6 +94,7 @@
       .home-open-empty{padding:16px;border-top:1px solid #ecece8;color:#666;font-size:9px}
 
       @media(max-width:820px){
+        body:not(.product-home) .catalog-verification-guide{grid-template-columns:repeat(2,minmax(0,1fr))}
         body.product-home .ed-section.key-sources-section .ed-open-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
         .home-open-row{grid-template-columns:70px 1fr 28px 18px}.home-open-row .open-program{display:none}
       }
@@ -97,6 +103,8 @@
         .card .cat-bar .verification-level-badge{align-items:center;flex-direction:row}
         .verification-legend{gap:5px;font-size:10.5px}
         .verification-legend-item{padding:5px 8px}
+        body:not(.product-home) .catalog-verification-guide{grid-template-columns:1fr}
+        body:not(.product-home) .catalog-verification-guide-item p{font-size:10px}
         body.product-home .home-personal .home-verification-guide-item{padding:10px 11px}
         body.product-home .home-personal .home-verification-guide-item p{font-size:10px}
         body.product-home .ed-section.key-sources-section .ed-open-grid{grid-template-columns:1fr!important}
@@ -154,16 +162,16 @@
   function renderVerificationLegend() {
     const catalogHead = document.querySelector('body:not(.product-home) .results-head');
     if (!catalogHead || catalogHead.querySelector('.verification-legend')) return;
-    const legend = document.createElement('div');
-    legend.className = 'verification-legend';
-    legend.setAttribute('aria-label', 'Уровни проверки данных');
-    legend.innerHTML = [
-      ['A','Проверено'],
-      ['B','Частично проверено'],
-      ['C','Требует проверки'],
-      ['D','Ограничено / реструктурировано']
-    ].map(([level,label]) => `<span class="verification-legend-item" data-level="${level}" title="${esc(LABELS[level][1])}"><strong>${level}</strong>${esc(label)}</span>`).join('');
-    catalogHead.append(legend);
+    const guide = document.createElement('div');
+    guide.className = 'verification-legend catalog-verification-guide';
+    guide.setAttribute('aria-label', 'Уровни проверки данных');
+    guide.innerHTML = [
+      ['A','Проверено','Программа и ключевые данные подтверждены первичным официальным источником.'],
+      ['B','Частично проверено','Программа подтверждена, но отдельные параметры ещё требуют проверки.'],
+      ['C','Требует проверки','Часть заявленных условий пока не подтверждена первичным официальным источником.'],
+      ['D','Ограничено / реструктурировано','Есть существенное ограничение, исправлена исходная трактовка или карточка реструктурирована.']
+    ].map(([level,label,text]) => `<div class="catalog-verification-guide-item"><span class="verification-legend-item" data-level="${level}" title="${esc(LABELS[level][1])}"><strong>${level}</strong>${esc(label)}</span><p>${esc(text)}</p></div>`).join('');
+    catalogHead.append(guide);
   }
 
   function renderHomeVerificationGuide(section) {
