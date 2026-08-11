@@ -7,10 +7,10 @@
     D: ['D · Ограничено / реструктурировано', 'Есть существенное ограничение, ошибка исходной трактовки или структурное изменение']
   };
   const ORG_LOGOS = [
-    { test: /фонд кино/i, src: 'https://fond-kino.ru/favicon.ico', fallback: 'ФК', alt: 'Фонд кино' },
-    { test: /(^|\s|\()ири(?:\s|$|\()/i, src: 'assets/iri-mark.svg', fallback: 'ИРИ', alt: 'ИРИ' },
-    { test: /пфки|президентск.*фонд.*культурн.*инициатив/i, src: 'https://xn--80aeeqaabljrdbg6a3ahhcl4ay9hsa.xn--p1ai/favicon.ico', fallback: 'ПФ', alt: 'ПФКИ' },
-    { test: /кинопрайм|kinoprime/i, src: 'https://www.kinoprimefoundation.com/favicon.ico', fallback: 'КП', alt: 'Кинопрайм' }
+    { test: /фонд кино/i, src: 'assets/fond-kino-logo.png', kind: 'fund-logo--wide', alt: 'Фонд кино' },
+    { test: /(^|\s|\()ири(?:\s|$|\()/i, src: 'assets/iri-logo.svg', kind: 'fund-logo--wide', alt: 'ИРИ' },
+    { test: /пфки|президентск.*фонд.*культурн.*инициатив/i, src: 'assets/pfki-logo.svg', kind: 'fund-logo--square', alt: 'ПФКИ' },
+    { test: /кинопрайм|kinoprime/i, src: 'assets/kinoprime-logo.png', kind: 'fund-logo--square', alt: 'Кинопрайм' }
   ];
   const MONTHS = {января:0,февраля:1,марта:2,апреля:3,мая:4,июня:5,июля:6,августа:7,сентября:8,октября:9,ноября:10,декабря:11};
   let byId = new Map();
@@ -22,7 +22,7 @@
   const logoFor = value => ORG_LOGOS.find(entry => entry.test.test(String(value || ''))) || null;
   const logoMarkup = value => {
     const logo = logoFor(value);
-    return logo ? `<span class="fund-logo" aria-hidden="true"><span class="fund-logo-fallback">${esc(logo.fallback)}</span><img src="${esc(logo.src)}" alt="" loading="eager" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="this.remove()"></span>` : '';
+    return logo ? `<span class="fund-logo ${esc(logo.kind)}" aria-hidden="true"><img src="${esc(logo.src)}" alt="" loading="eager" decoding="async"></span>` : '';
   };
 
   function injectStyles() {
@@ -40,12 +40,14 @@
       .card .cat-bar .verification-level-badge{width:max-content;max-width:100%;margin-top:9px;padding:5px 8px}
       .card .cat-bar .verification-level-badge span{display:none}
 
-      .fund-logo{position:relative;display:inline-grid;place-items:center;flex:0 0 auto;width:24px;height:24px;border:1px solid #e4e4df;border-radius:7px;background:#fff;overflow:hidden}
-      .fund-logo-fallback{display:grid;place-items:center;width:100%;height:100%;color:#555;font-size:7px;font-weight:850;line-height:1;letter-spacing:-.02em}
-      .fund-logo img{position:absolute;inset:0;margin:auto;display:block;max-width:18px;max-height:18px;width:auto;height:auto;object-fit:contain;background:#fff}
+      .fund-logo{position:relative;display:inline-grid;place-items:center;flex:0 0 auto;width:28px;height:24px;border:1px solid #e4e4df;border-radius:7px;background:#fff;overflow:hidden}
+      .fund-logo--wide{width:34px}
+      .fund-logo img{display:block;width:100%;height:100%;padding:3px;object-fit:contain;background:#fff}
+      .fund-logo--wide img{padding:2px}
       .card .cat-bar .org.has-fund-logo{display:flex;align-items:center;gap:8px}
-      .card .cat-bar .org.has-fund-logo .fund-logo{width:22px;height:22px;border-radius:6px}
-      .card .cat-bar .org.has-fund-logo .fund-logo img{max-width:16px;max-height:16px}
+      .card .cat-bar .org.has-fund-logo .fund-logo{height:22px;border-radius:6px}
+      .card .cat-bar .org.has-fund-logo .fund-logo--square{width:22px}
+      .card .cat-bar .org.has-fund-logo .fund-logo--wide{width:32px}
 
       body.product-home .key-sources-section .ed-section-head::after,
       body:not(.product-home) .results-head:has(+ .quicknav)::after{content:none!important;display:none!important}
@@ -113,8 +115,9 @@
         body.product-home .home-personal .home-verification-guide-item p{font-size:10px}
         body.product-home .ed-section.key-sources-section .ed-open-grid{grid-template-columns:1fr!important}
         .key-source-card{min-height:160px}
-        .fund-logo{width:22px;height:22px}
-        .fund-logo img{max-width:16px;max-height:16px}
+        .fund-logo{height:22px}
+        .fund-logo--square{width:22px}
+        .fund-logo--wide{width:32px}
       }
     `;
     document.head.append(style);
