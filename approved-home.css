@@ -99,6 +99,47 @@ body.product-home nav.tabs a small{font-size:8px!important}
 body.product-home .results-head[hidden],body.product-home .results-grid[hidden]{display:none!important}
 body.product-home footer.site{grid-column:1/-1;margin-top:22px!important;padding-top:10px!important}
 
+/* Readability pass — 2026-08-11. Keep layout, enlarge working typography. */
+body.product-home .ed-intro{font-size:12.5px!important;line-height:1.52!important}
+body.product-home .ed-stat-label{font-size:9px!important;line-height:1.3!important}
+body.product-home .panel h2{font-size:15.5px!important}
+body.product-home .field label{font-size:9.5px!important}
+body.product-home .field select,body.product-home .field input[type=text]{font-size:11px!important}
+body.product-home button.primary,body.product-home button.ghost{font-size:10.5px!important}
+body.product-home .ed-section-head h2{font-size:18px!important}
+body.product-home .ed-section-head a{font-size:10px!important}
+body.product-home .home-personal-label{font-size:10px!important}
+body.product-home .personal-card h3{font-size:14.5px!important}
+body.product-home .personal-next-name{font-size:11px!important}
+body.product-home .personal-muted{font-size:10px!important}
+body.product-home .personal-stat span{font-size:9px!important}
+body.product-home .personal-action{font-size:10px!important}
+body.product-home .personal-update{font-size:9px!important;line-height:1.4!important}
+body.product-home nav.tabs a span{font-size:13px!important}
+body.product-home nav.tabs a small{font-size:9.5px!important}
+.home-deadlines-head h2{font-size:15px!important}
+.home-deadlines-head a{font-size:9.5px!important}
+.home-deadline-row{grid-template-columns:125px 220px 1fr 120px 22px!important;min-height:46px!important;font-size:10.5px!important;line-height:1.3!important}
+.home-deadline-row strong{font-size:10.5px!important}
+.home-deadline-row .arrow{font-size:17px!important}
+body.product-home footer.site{font-size:9.5px!important;line-height:1.5!important}
+
+/* Variant 4: key sources + open now. These styles override runtime-injected defaults. */
+body.product-home .key-source-card{min-height:200px!important;padding:17px!important}
+body.product-home .key-source-badge{font-size:7.5px!important;padding:4px 7px!important}
+body.product-home .key-source-name{font-size:17px!important;line-height:1.1!important}
+body.product-home .key-source-role{font-size:10px!important;line-height:1.4!important;min-height:32px!important}
+body.product-home .key-source-types{font-size:10.5px!important;line-height:1.42!important}
+body.product-home .key-source-fact{font-size:13px!important;line-height:1.3!important}
+body.product-home .key-source-link{font-size:9px!important}
+body.product-home .home-open-now-head h3{font-size:15px!important}
+body.product-home .home-open-now-head a{font-size:9.5px!important}
+body.product-home .home-open-row{grid-template-columns:80px 190px minmax(0,1fr) 30px 20px!important;min-height:44px!important;font-size:10.5px!important;line-height:1.25!important}
+body.product-home .home-open-row strong{font-size:10.5px!important}
+body.product-home .home-open-row .open-level{width:25px!important;height:20px!important;font-size:8px!important}
+body.product-home .home-open-row .open-arrow{font-size:15px!important}
+body.product-home .home-open-empty{font-size:10.5px!important}
+
 @media(max-width:1180px){
  body.product-home .ed-main{grid-template-columns:1fr!important}
  body.product-home .ed-main>.product-home-main{grid-column:1;grid-row:auto}
@@ -114,7 +155,9 @@ body.product-home footer.site{grid-column:1/-1;margin-top:22px!important;padding
  body.product-home .ed-section,body.product-home .home-deadlines{grid-column:1}
  body.product-home .ed-open-grid{grid-template-columns:repeat(2,1fr)!important}
  body.product-home .home-personal{grid-template-columns:1fr!important}
- .home-deadline-row{grid-template-columns:95px 1fr 24px}.home-deadline-row>:nth-child(3),.home-deadline-row>:nth-child(4){display:none}
+ .home-deadline-row{grid-template-columns:100px 1fr 24px!important}.home-deadline-row>:nth-child(3),.home-deadline-row>:nth-child(4){display:none}
+ body.product-home .home-open-row{grid-template-columns:78px 1fr 30px 20px!important}
+ .home-open-row .open-program{display:none}
  .target-header-actions{display:none}
 }
 @media(max-width:560px){body.product-home .ed-open-grid{grid-template-columns:1fr!important}}
