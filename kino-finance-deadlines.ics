@@ -7,7 +7,7 @@ X-WR-CALNAME:Финансирование кино — дедлайны
 X-WR-TIMEZONE:Europe/Moscow
 BEGIN:VEVENT
 UID:spb-pitch-2026@kino-finance-russia
-DTSTAMP:20260811T030000Z
+DTSTAMP:20260811T043000Z
 DTSTART;VALUE=DATE:20260815
 DTEND;VALUE=DATE:20260816
 SUMMARY:Дедлайн — 4-й Санкт-Петербургский питчинг дебютантов
@@ -16,7 +16,7 @@ URL:https://script.moviestart.ru/
 END:VEVENT
 BEGIN:VEVENT
 UID:baikal-pitch-2026@kino-finance-russia
-DTSTAMP:20260811T030000Z
+DTSTAMP:20260811T043000Z
 DTSTART;VALUE=DATE:20260816
 DTEND;VALUE=DATE:20260817
 SUMMARY:Дедлайн — Байкальский питчинг кинопроектов 2026
@@ -25,16 +25,16 @@ URL:https://script.moviestart.ru/
 END:VEVENT
 BEGIN:VEVENT
 UID:eave-pw-2027@kino-finance-russia
-DTSTAMP:20260811T030000Z
+DTSTAMP:20260811T043000Z
 DTSTART;VALUE=DATE:20260817
 DTEND;VALUE=DATE:20260818
 SUMMARY:Дедлайн — EAVE Producers Workshop 2027
 DESCRIPTION:Программа и дедлайн подтверждены. Eligibility российского заявителя требует отдельной проверки.
-URL:https://eave.org/
+URL:https://eave.org/programmes/eave-producers-workshop-2027
 END:VEVENT
 BEGIN:VEVENT
 UID:berlinale-talents-early-2027@kino-finance-russia
-DTSTAMP:20260811T030000Z
+DTSTAMP:20260811T043000Z
 DTSTART;VALUE=DATE:20260819
 DTEND;VALUE=DATE:20260820
 SUMMARY:Early Bird — Berlinale Talents 2027
@@ -43,7 +43,7 @@ URL:https://www.berlinale-talents.de/bt/page/c/apply
 END:VEVENT
 BEGIN:VEVENT
 UID:leff-pitch-2026@kino-finance-russia
-DTSTAMP:20260811T030000Z
+DTSTAMP:20260811T043000Z
 DTSTART;VALUE=DATE:20260822
 DTEND;VALUE=DATE:20260823
 SUMMARY:Питчинг — Lendoc Film Festival (LEFF)
@@ -52,7 +52,7 @@ URL:https://lefflendoc.ru/
 END:VEVENT
 BEGIN:VEVENT
 UID:jih-ava-jb-films-2026@kino-finance-russia
-DTSTAMP:20260811T030000Z
+DTSTAMP:20260811T043000Z
 DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:Дедлайн — Ji.hlava / JB Films Support 2026
@@ -61,7 +61,7 @@ URL:https://www.ji-hlava.com/ji-hlava-jb-films
 END:VEVENT
 BEGIN:VEVENT
 UID:berlinale-talents-final-2027@kino-finance-russia
-DTSTAMP:20260811T030000Z
+DTSTAMP:20260811T043000Z
 DTSTART;VALUE=DATE:20260902
 DTEND;VALUE=DATE:20260903
 SUMMARY:Финальный дедлайн — Berlinale Talents 2027
@@ -70,7 +70,7 @@ URL:https://www.berlinale-talents.de/bt/page/c/apply
 END:VEVENT
 BEGIN:VEVENT
 UID:dream-makers-2027@kino-finance-russia
-DTSTAMP:20260811T030000Z
+DTSTAMP:20260811T043000Z
 DTSTART;VALUE=DATE:20260902
 DTEND;VALUE=DATE:20260903
 SUMMARY:Дедлайн — Berlinale Talents: The Dream Makers
@@ -79,7 +79,7 @@ URL:https://www.berlinale-talents.de/bt/page/c/dreammakers
 END:VEVENT
 BEGIN:VEVENT
 UID:tavrida-grants-2026@kino-finance-russia
-DTSTAMP:20260811T030000Z
+DTSTAMP:20260811T043000Z
 DTSTART;VALUE=DATE:20260915
 DTEND;VALUE=DATE:20260916
 SUMMARY:Дедлайн — Росмолодёжь / Таврида.АРТ
@@ -87,8 +87,17 @@ DESCRIPTION:Гранты творческим инициативам молод�
 URL:https://tavrida.art/grants/grant-support
 END:VEVENT
 BEGIN:VEVENT
+UID:krasnoyarsk-rebate-round2-2026@kino-finance-russia
+DTSTAMP:20260811T043000Z
+DTSTART;VALUE=DATE:20260930
+DTEND;VALUE=DATE:20261001
+SUMMARY:Дедлайн — Красноярский край: второй этап рибейта 2026
+DESCRIPTION:Второй этап официально запланирован на 1–30 сентября 2026 года. 50 млн руб. — общий объём субсидии первого этапа, не лимит одной заявки.
+URL:https://filmcommission.ru/grants/ribejty
+END:VEVENT
+BEGIN:VEVENT
 UID:pfki-2027-results@kino-finance-russia
-DTSTAMP:20260811T030000Z
+DTSTAMP:20260811T043000Z
 DTSTART;VALUE=DATE:20261112
 DTEND;VALUE=DATE:20261113
 SUMMARY:Результаты — ПФКИ: первый конкурс 2027 года
