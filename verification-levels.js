@@ -18,7 +18,7 @@
 
   const norm = v => String(v || '').replace(/\s+/g, ' ').trim().toLowerCase();
   const key = (org, program) => `${norm(org)}|${norm(program)}`;
-  const esc = v => String(v || '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  const esc = v => String(v || '').replace(/[&<>'\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));
   const logoFor = value => ORG_LOGOS.find(entry => entry.test.test(String(value || ''))) || null;
   const logoMarkup = value => {
     const logo = logoFor(value);
@@ -56,10 +56,10 @@
       .verification-legend-item[data-level="C"]{background:#fff0ed;border-color:#e9b4ab;color:#a53d30}
       .verification-legend-item[data-level="D"]{background:#eeeeec;border-color:#c9c9c4;color:#50504d}
 
-      .home-verification-guide{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0 0}
-      .home-verification-guide-item{min-width:0;padding:10px 11px;border:1px solid #e4e4df;border-radius:11px;background:#fafaf8}
-      .home-verification-guide-item .verification-legend-item{display:inline-flex;margin:0 0 7px;font-size:10px;min-height:25px;padding:4px 8px}
-      .home-verification-guide-item p{margin:0;color:#666;font-size:9.5px;line-height:1.38}
+      body.product-home .home-personal .home-verification-guide{display:grid;grid-template-columns:1fr;gap:8px;width:100%;margin:0}
+      body.product-home .home-personal .home-verification-guide-item{min-width:0;padding:11px 12px;border:1px solid #e4e4df;border-radius:12px;background:#fafaf8}
+      body.product-home .home-personal .home-verification-guide-item .verification-legend-item{display:inline-flex;margin:0 0 7px;font-size:10px;min-height:25px;padding:4px 8px}
+      body.product-home .home-personal .home-verification-guide-item p{margin:0;color:#666;font-size:9.5px;line-height:1.4}
 
       body.product-home .ed-section.key-sources-section{padding-top:25px!important}
       body.product-home .ed-section.key-sources-section .ed-section-head{margin-bottom:13px!important}
@@ -90,7 +90,6 @@
 
       @media(max-width:820px){
         body.product-home .ed-section.key-sources-section .ed-open-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-        .home-verification-guide{grid-template-columns:repeat(2,minmax(0,1fr))}
         .home-open-row{grid-template-columns:70px 1fr 28px 18px}.home-open-row .open-program{display:none}
       }
       @media(max-width:640px){
@@ -98,9 +97,8 @@
         .card .cat-bar .verification-level-badge{align-items:center;flex-direction:row}
         .verification-legend{gap:5px;font-size:10.5px}
         .verification-legend-item{padding:5px 8px}
-        .home-verification-guide{grid-template-columns:1fr}
-        .home-verification-guide-item{padding:10px 11px}
-        .home-verification-guide-item p{font-size:10px}
+        body.product-home .home-personal .home-verification-guide-item{padding:10px 11px}
+        body.product-home .home-personal .home-verification-guide-item p{font-size:10px}
         body.product-home .ed-section.key-sources-section .ed-open-grid{grid-template-columns:1fr!important}
         .key-source-card{min-height:160px}
         .fund-logo{width:22px;height:22px}
@@ -168,8 +166,11 @@
     catalogHead.append(legend);
   }
 
-  function renderHomeVerificationGuide(section, grid) {
+  function renderHomeVerificationGuide(section) {
     section.querySelector('.home-verification-guide')?.remove();
+    const aside = document.querySelector('body.product-home .home-personal');
+    if (!aside) return;
+    aside.querySelector('.home-verification-guide')?.remove();
     const guide = document.createElement('div');
     guide.className = 'home-verification-guide';
     guide.setAttribute('aria-label', 'Что означают статусы проверки данных');
@@ -179,7 +180,7 @@
       ['C','Требует проверки','Часть заявленных условий пока не подтверждена первичным официальным источником.'],
       ['D','Ограничено / реструктурировано','Есть существенное ограничение, исправлена исходная трактовка или карточка реструктурирована.']
     ].map(([level,label,text]) => `<div class="home-verification-guide-item"><span class="verification-legend-item" data-level="${level}"><strong>${level}</strong>${esc(label)}</span><p>${esc(text)}</p></div>`).join('');
-    grid.insertAdjacentElement('afterend', guide);
+    aside.append(guide);
   }
 
   function applyCatalogQueryFromUrl() {
@@ -297,7 +298,7 @@
         </a>`;
       }).join('') : '<div class="home-open-empty">Сейчас нет подтверждённых открытых приёмов с фиксированным дедлайном.</div>'}`;
     grid.insertAdjacentElement('afterend', block);
-    renderHomeVerificationGuide(section, grid);
+    renderHomeVerificationGuide(section);
   }
 
   async function load() {
