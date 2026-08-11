@@ -13,6 +13,7 @@ body.product-home .ed-main{display:grid;grid-template-columns:minmax(0,1fr) 344p
 .product-home .ed-stats{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:0!important;margin:20px 0 0!important;max-width:620px!important;border:0!important}
 .product-home .ed-stat{min-height:74px!important;padding:8px 16px 6px 0!important;border:0!important;border-right:1px solid var(--ui-line)!important}
 .product-home .ed-stat:last-child{border-right:0!important}
+body.product-home .ed-stats .ed-stat:not(:first-child){padding-left:22px!important}
 .product-home .ed-stat-value{font-family:inherit!important;font-size:28px!important;line-height:1!important;font-weight:740!important;letter-spacing:-.045em!important}
 .product-home .ed-stat-label{margin-top:7px!important;max-width:120px!important;color:var(--ui-muted)!important;font-size:8.5px!important;line-height:1.25!important;text-transform:none!important;font-weight:550!important}
 
